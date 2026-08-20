@@ -98,10 +98,7 @@ export function AuthForm() {
               checked={waiverChecked}
               onChange={(e) => setWaiverChecked(e.target.checked)}
             />
-            <span>
-              I understand Cruciate is not medical advice and is not provided by a
-              licensed physical therapist. I'll see the full waiver next.
-            </span>
+            <span>I understand this isn't medical advice — full details next.</span>
           </label>
         )}
 
