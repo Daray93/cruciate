@@ -43,7 +43,7 @@ export function SessionDetail({ sessionId }: { sessionId: string }) {
     <div className="session-detail">
       {rom && (rom.extension !== null || rom.flexion !== null) && (
         <p className="session-detail-rom">
-          ROM: {rom.extension ?? '—'}° extension / {rom.flexion ?? '—'}° flexion
+          ROM: {rom.extension ?? '-'}° extension / {rom.flexion ?? '-'}° flexion
         </p>
       )}
       {exercises.length === 0 ? (
@@ -53,7 +53,7 @@ export function SessionDetail({ sessionId }: { sessionId: string }) {
           {exercises.map((exercise) => (
             <li key={exercise.name}>
               <span className={exercise.done ? 'session-detail-done' : 'session-detail-not-done'}>
-                {exercise.done ? <IconCheck className="session-detail-check" /> : '—'}
+                {exercise.done ? <IconCheck className="session-detail-check" /> : '-'}
               </span>
               {exercise.name}
               {exercise.weight !== null && ` · ${exercise.weight}kg`}

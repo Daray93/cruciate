@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { WAIVER_TEXT, WAIVER_VERSION } from '../lib/waiver'
+import { Alert } from './Alert'
 import './WaiverScreen.css'
 
 interface WaiverScreenProps {
@@ -42,7 +43,7 @@ export function WaiverScreen({ userId, onAccepted }: WaiverScreenProps) {
         <span>I have read and agree to the above.</span>
       </label>
 
-      {error && <p className="waiver-error">{error}</p>}
+      {error && <Alert variant="error">{error}</Alert>}
 
       <button type="button" className="waiver-accept-button" disabled={!checked || submitting} onClick={handleAccept}>
         {submitting ? 'Saving…' : 'Accept & continue'}

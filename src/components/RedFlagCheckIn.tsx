@@ -22,11 +22,11 @@ export function RedFlagCheckIn({ active, onFlag, onClear }: RedFlagCheckInProps)
         <p className="red-flag-title">Contact your care team before continuing</p>
         <p className="red-flag-body">
           You flagged a concerning symptom today, so today's exercises are paused. If
-          this feels urgent, don't wait on this app — contact your surgeon, PT, or
+          this feels urgent, don't wait on this app. Contact your surgeon, PT, or
           emergency services now.
         </p>
         <button type="button" className="red-flag-clear" onClick={onClear}>
-          Symptoms resolved — resume
+          Symptoms resolved, resume
         </button>
       </div>
     )

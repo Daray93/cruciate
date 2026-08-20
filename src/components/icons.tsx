@@ -36,3 +36,23 @@ export function IconCheck({ className }: IconProps) {
     </svg>
   )
 }
+
+export function IconAlertCircle({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v5" />
+      <path d="M12 16.2v.1" />
+    </svg>
+  )
+}
+
+export function IconInfoCircle({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" />
+      <path d="M12 7.8v.1" />
+    </svg>
+  )
+}

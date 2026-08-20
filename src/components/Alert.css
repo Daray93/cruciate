@@ -1,0 +1,33 @@
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.alert p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.alert-error {
+  background: var(--red-soft);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.alert-info {
+  background: var(--teal-soft);
+  border-color: var(--teal);
+  color: var(--teal);
+}

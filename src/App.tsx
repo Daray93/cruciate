@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AuthGate } from './components/AuthGate'
+import { DesignSystemPage } from './components/DesignSystemPage'
 import { WeekDaySelector } from './components/WeekDaySelector'
 import { ExerciseChecklist } from './components/ExerciseChecklist'
 import { ThemeToggle } from './components/ThemeToggle'
@@ -21,13 +22,18 @@ import './App.css'
 
 function App() {
   const { theme, toggleTheme } = useTheme()
+  const isDesignSystemRoute = window.location.pathname === '/design-system'
 
   return (
     <>
       <div className="floating-theme-toggle">
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
-      <AuthGate>{(userId) => <Tracker userId={userId} />}</AuthGate>
+      {isDesignSystemRoute ? (
+        <DesignSystemPage />
+      ) : (
+        <AuthGate>{(userId) => <Tracker userId={userId} />}</AuthGate>
+      )}
     </>
   )
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
+import { Alert } from './Alert'
 import { FloatingInput } from './FloatingInput'
 import './AuthForm.css'
 
@@ -95,12 +96,12 @@ export function AuthForm() {
               checked={waiverChecked}
               onChange={(e) => setWaiverChecked(e.target.checked)}
             />
-            <span>I understand this isn't medical advice — full details next.</span>
+            <span>I understand this isn't medical advice - full details next.</span>
           </label>
         )}
 
-        {error && <p className="auth-error">{error}</p>}
-        {info && <p className="auth-info">{info}</p>}
+        {error && <Alert variant="error">{error}</Alert>}
+        {info && <Alert variant="info">{info}</Alert>}
 
         <button type="submit" className="auth-submit" disabled={submitting}>
           {submitting ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}
