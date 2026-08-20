@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { IconCheck } from './icons'
 import './SessionDetail.css'
 
 interface ExerciseRow {
@@ -52,7 +53,7 @@ export function SessionDetail({ sessionId }: { sessionId: string }) {
           {exercises.map((exercise) => (
             <li key={exercise.name}>
               <span className={exercise.done ? 'session-detail-done' : 'session-detail-not-done'}>
-                {exercise.done ? '✓' : '—'}
+                {exercise.done ? <IconCheck className="session-detail-check" /> : '—'}
               </span>
               {exercise.name}
               {exercise.weight !== null && ` · ${exercise.weight}kg`}

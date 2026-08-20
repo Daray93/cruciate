@@ -24,12 +24,15 @@
   gap: var(--space-1);
 }
 
-.session-detail-done {
-  color: var(--green);
+.session-detail-done,
+.session-detail-not-done {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-muted);
   margin-right: var(--space-2);
 }
 
-.session-detail-not-done {
-  color: var(--ink-muted);
-  margin-right: var(--space-2);
+.session-detail-check {
+  width: 14px;
+  height: 14px;
 }

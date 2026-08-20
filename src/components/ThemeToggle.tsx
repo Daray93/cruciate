@@ -1,4 +1,5 @@
 import type { Theme } from '../hooks/useTheme'
+import { IconMoon, IconSun } from './icons'
 import './ThemeToggle.css'
 
 interface ThemeToggleProps {
@@ -17,7 +18,7 @@ export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {isDark ? '🌙' : '☀️'}
+      {isDark ? <IconMoon className="theme-toggle-icon" /> : <IconSun className="theme-toggle-icon" />}
     </button>
   )
 }
