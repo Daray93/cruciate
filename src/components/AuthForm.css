@@ -1,0 +1,114 @@
+.auth-form-wrap {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.auth-form-wrap h1 {
+  margin: 0 0 var(--space-1);
+}
+
+.auth-subtitle {
+  margin: 0 0 var(--space-5);
+  color: var(--ink-muted);
+}
+
+.auth-mode-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.auth-mode-tab {
+  flex: 1;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-mode-tab.active {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.auth-form input[type='email'],
+.auth-form input[type='password'] {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.waiver-checkbox {
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: var(--space-2) !important;
+  font-size: 0.8rem !important;
+  line-height: 1.4;
+}
+
+.waiver-checkbox input {
+  margin-top: 2px;
+  accent-color: var(--teal);
+}
+
+.auth-error {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--red-soft);
+  color: var(--red);
+  font-size: 0.85rem;
+}
+
+.auth-info {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--teal-soft);
+  color: var(--teal);
+  font-size: 0.85rem;
+}
+
+.auth-submit {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

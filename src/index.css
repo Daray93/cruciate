@@ -1,0 +1,136 @@
+:root {
+  color-scheme: light dark;
+
+  --bg: #f4f6f6;
+  --surface: #ffffff;
+  --surface-raised: #eef1f2;
+  --border: #d7dee0;
+  --ink: #16211f;
+  --ink-muted: #5c6c70;
+
+  --teal: #0f8f82;
+  --teal-soft: rgba(15, 143, 130, 0.12);
+  --amber: #a86a10;
+  --amber-soft: rgba(168, 106, 16, 0.12);
+  --green: #23855a;
+  --green-soft: rgba(35, 133, 90, 0.12);
+  --red: #c23b41;
+  --red-soft: rgba(194, 59, 65, 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0f1416;
+    --surface: #182024;
+    --surface-raised: #202a2f;
+    --border: #2a353b;
+    --ink: #eef2f3;
+    --ink-muted: #8fa0a6;
+
+    --teal: #3ecfc0;
+    --teal-soft: rgba(62, 207, 192, 0.15);
+    --amber: #f2b94c;
+    --amber-soft: rgba(242, 185, 76, 0.15);
+    --green: #57c785;
+    --green-soft: rgba(87, 199, 133, 0.15);
+    --red: #e8646a;
+    --red-soft: rgba(232, 100, 106, 0.15);
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0f1416;
+  --surface: #182024;
+  --surface-raised: #202a2f;
+  --border: #2a353b;
+  --ink: #eef2f3;
+  --ink-muted: #8fa0a6;
+
+  --teal: #3ecfc0;
+  --teal-soft: rgba(62, 207, 192, 0.15);
+  --amber: #f2b94c;
+  --amber-soft: rgba(242, 185, 76, 0.15);
+  --green: #57c785;
+  --green-soft: rgba(87, 199, 133, 0.15);
+  --red: #e8646a;
+  --red-soft: rgba(232, 100, 106, 0.15);
+}
+
+:root[data-theme='light'] {
+  --bg: #f4f6f6;
+  --surface: #ffffff;
+  --surface-raised: #eef1f2;
+  --border: #d7dee0;
+  --ink: #16211f;
+  --ink-muted: #5c6c70;
+
+  --teal: #0f8f82;
+  --teal-soft: rgba(15, 143, 130, 0.12);
+  --amber: #a86a10;
+  --amber-soft: rgba(168, 106, 16, 0.12);
+  --green: #23855a;
+  --green-soft: rgba(35, 133, 90, 0.12);
+  --red: #c23b41;
+  --red-soft: rgba(194, 59, 65, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
+
+.floating-theme-toggle {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 10;
+}
+
+.full-screen-message {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--ink-muted);
+}

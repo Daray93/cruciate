@@ -1,0 +1,127 @@
+export interface Database {
+  public: {
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
+    Tables: {
+      sessions: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          day_key: string
+          cycle_week: number
+          red_flag: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          day_key: string
+          cycle_week: number
+          red_flag?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          day_key?: string
+          cycle_week?: number
+          red_flag?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      exercises_logged: {
+        Row: {
+          id: string
+          session_id: string
+          name: string
+          done: boolean
+          weight: number | null
+          reps: number | null
+          rpe: number | null
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          name: string
+          done?: boolean
+          weight?: number | null
+          reps?: number | null
+          rpe?: number | null
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          name?: string
+          done?: boolean
+          weight?: number | null
+          reps?: number | null
+          rpe?: number | null
+        }
+        Relationships: []
+      }
+      rom_readings: {
+        Row: {
+          id: string
+          session_id: string
+          extension: number | null
+          flexion: number | null
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          extension?: number | null
+          flexion?: number | null
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          extension?: number | null
+          flexion?: number | null
+        }
+        Relationships: []
+      }
+      clearance: {
+        Row: {
+          user_id: string
+          load_cleared: boolean
+          run_cleared: boolean
+        }
+        Insert: {
+          user_id: string
+          load_cleared?: boolean
+          run_cleared?: boolean
+        }
+        Update: {
+          user_id?: string
+          load_cleared?: boolean
+          run_cleared?: boolean
+        }
+        Relationships: []
+      }
+      waiver_acceptances: {
+        Row: {
+          user_id: string
+          version: string
+          accepted_at: string
+        }
+        Insert: {
+          user_id: string
+          version: string
+          accepted_at?: string
+        }
+        Update: {
+          user_id?: string
+          version?: string
+          accepted_at?: string
+        }
+        Relationships: []
+      }
+    }
+  }
+}
