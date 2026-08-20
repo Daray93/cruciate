@@ -94,6 +94,16 @@
   box-sizing: border-box;
 }
 
+/* Progressive enhancement: continuous "squircle" corners wherever
+   border-radius is already set. No-op on square-cornered elements, and
+   browsers without corner-shape support (Safari, Firefox) just keep the
+   plain rounded corners already in place. */
+@supports (corner-shape: squircle) {
+  * {
+    corner-shape: squircle;
+  }
+}
+
 html,
 body {
   margin: 0;
