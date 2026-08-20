@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { Alert } from './Alert'
 import { FloatingInput } from './FloatingInput'
+import { IllustrationFigureBase } from './illustrations'
 import './AuthForm.css'
 
 type Mode = 'sign-in' | 'sign-up'
@@ -46,6 +47,7 @@ export function AuthForm() {
 
   return (
     <div className="auth-form-wrap">
+      <IllustrationFigureBase className="auth-form-illustration" />
       <h1>Cruciate</h1>
       <p className="auth-subtitle">Track your ACL prehab and rehab program.</p>
 

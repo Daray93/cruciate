@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Alert } from './Alert'
 import { FloatingInput } from './FloatingInput'
 import { IconCheck, IconMoon, IconSun } from './icons'
+import { IllustrationFigureBase, IllustrationMiniSquat, IllustrationQuadSet } from './illustrations'
 import './DesignSystemPage.css'
 
 const COLOR_TOKENS = [
@@ -167,6 +168,29 @@ export function DesignSystemPage() {
         <div className="component-row alert-row">
           <Alert variant="error">Something went wrong. Try again.</Alert>
           <Alert variant="info">Check your email to confirm your account.</Alert>
+        </div>
+      </section>
+
+      <section>
+        <h2>Exercise illustrations</h2>
+        <p className="illustration-note">
+          Single-weight line rig, monochrome by default, teal motion arrows only where direction
+          isn't obvious from a static pose. See src/components/illustrations.tsx for the joint
+          coordinates.
+        </p>
+        <div className="illustration-row">
+          <div className="illustration-tile">
+            <IllustrationFigureBase className="illustration-figure" />
+            <span>Base rig</span>
+          </div>
+          <div className="illustration-tile">
+            <IllustrationQuadSet className="illustration-figure" />
+            <span>Quad sets</span>
+          </div>
+          <div className="illustration-tile">
+            <IllustrationMiniSquat className="illustration-figure" />
+            <span>Mini squats</span>
+          </div>
         </div>
       </section>
     </main>
