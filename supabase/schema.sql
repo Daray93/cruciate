@@ -14,7 +14,9 @@ create table if not exists sessions (
 
 create index if not exists sessions_user_id_date_idx on sessions (user_id, date desc);
 
--- exercises_logged: one row per exercise performed within a session
+-- exercises_logged: one row per exercise performed within a session.
+-- Unique on (session_id, name) so a single exercise can be upserted in
+-- place as the user edits it, instead of accumulating duplicate rows.
 create table if not exists exercises_logged (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references sessions (id) on delete cascade,
@@ -22,17 +24,20 @@ create table if not exists exercises_logged (
   done boolean not null default false,
   weight numeric,
   reps integer,
-  rpe numeric
+  rpe numeric,
+  unique (session_id, name)
 );
 
 create index if not exists exercises_logged_session_id_idx on exercises_logged (session_id);
 
--- rom_readings: range-of-motion measurements taken within a session
+-- rom_readings: range-of-motion measurement taken during a session.
+-- Unique on session_id so it can be upserted (one reading per check-in).
 create table if not exists rom_readings (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references sessions (id) on delete cascade,
   extension numeric,
-  flexion numeric
+  flexion numeric,
+  unique (session_id)
 );
 
 create index if not exists rom_readings_session_id_idx on rom_readings (session_id);

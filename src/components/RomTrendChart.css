@@ -1,0 +1,54 @@
+.rom-trend-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rom-trend-chart svg {
+  width: 100%;
+  height: auto;
+}
+
+.rom-trend-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rom-trend-line.extension {
+  stroke: var(--amber);
+}
+
+.rom-trend-line.flexion {
+  stroke: var(--teal);
+}
+
+.rom-trend-legend {
+  display: flex;
+  gap: var(--space-4);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.rom-trend-legend-item::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--space-1);
+}
+
+.rom-trend-legend-item.extension::before {
+  background: var(--amber);
+}
+
+.rom-trend-legend-item.flexion::before {
+  background: var(--teal);
+}
+
+.rom-trend-empty {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}

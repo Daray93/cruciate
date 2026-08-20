@@ -33,3 +33,8 @@ export interface LoggedExercise {
 }
 
 export type ExerciseLog = Record<string, LoggedExercise>
+
+export interface RomEntry {
+  extension: string
+  flexion: string
+}

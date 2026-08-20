@@ -1,0 +1,35 @@
+.session-detail {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.session-detail-loading,
+.session-detail-empty {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.session-detail-rom {
+  margin: 0 0 var(--space-2);
+  color: var(--ink-muted);
+}
+
+.session-detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.session-detail-done {
+  color: var(--green);
+  margin-right: var(--space-2);
+}
+
+.session-detail-not-done {
+  color: var(--ink-muted);
+  margin-right: var(--space-2);
+}
