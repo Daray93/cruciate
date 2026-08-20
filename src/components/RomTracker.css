@@ -8,25 +8,3 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
 }
-
-.rom-fields label {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  font-size: 0.75rem;
-  color: var(--ink-muted);
-}
-
-.rom-fields input {
-  padding: var(--space-3);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 1rem;
-}
-
-.rom-fields input:focus {
-  outline: none;
-  border-color: var(--teal);
-}

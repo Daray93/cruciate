@@ -1,4 +1,5 @@
 import type { ExerciseDef, ExerciseLog, LoggedExercise } from '../types'
+import { FloatingInput } from './FloatingInput'
 import './ExerciseChecklist.css'
 
 interface ExerciseChecklistProps {
@@ -37,35 +38,29 @@ export function ExerciseChecklist({ exercises, log, loadCleared, onChange }: Exe
 
             {!locked && (
               <div className="exercise-fields">
-                <label>
-                  <span>Weight</span>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    value={entry.weight}
-                    onChange={(e) => onChange(exercise.id, { weight: e.target.value })}
-                  />
-                </label>
-                <label>
-                  <span>Reps</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={entry.reps}
-                    onChange={(e) => onChange(exercise.id, { reps: e.target.value })}
-                  />
-                </label>
-                <label>
-                  <span>RPE</span>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    min={0}
-                    max={10}
-                    value={entry.rpe}
-                    onChange={(e) => onChange(exercise.id, { rpe: e.target.value })}
-                  />
-                </label>
+                <FloatingInput
+                  label="Weight"
+                  type="number"
+                  inputMode="decimal"
+                  value={entry.weight}
+                  onChange={(e) => onChange(exercise.id, { weight: e.target.value })}
+                />
+                <FloatingInput
+                  label="Reps"
+                  type="number"
+                  inputMode="numeric"
+                  value={entry.reps}
+                  onChange={(e) => onChange(exercise.id, { reps: e.target.value })}
+                />
+                <FloatingInput
+                  label="RPE"
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  max={10}
+                  value={entry.rpe}
+                  onChange={(e) => onChange(exercise.id, { rpe: e.target.value })}
+                />
               </div>
             )}
           </li>

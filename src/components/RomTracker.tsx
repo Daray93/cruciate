@@ -1,4 +1,5 @@
 import type { RomEntry } from '../types'
+import { FloatingInput } from './FloatingInput'
 import './RomTracker.css'
 
 interface RomTrackerProps {
@@ -11,24 +12,20 @@ export function RomTracker({ reading, onChange }: RomTrackerProps) {
     <section className="rom-tracker">
       <h2>Range of motion</h2>
       <div className="rom-fields">
-        <label>
-          <span>Extension (°)</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            value={reading.extension}
-            onChange={(e) => onChange({ extension: e.target.value })}
-          />
-        </label>
-        <label>
-          <span>Flexion (°)</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            value={reading.flexion}
-            onChange={(e) => onChange({ flexion: e.target.value })}
-          />
-        </label>
+        <FloatingInput
+          label="Extension (°)"
+          type="number"
+          inputMode="decimal"
+          value={reading.extension}
+          onChange={(e) => onChange({ extension: e.target.value })}
+        />
+        <FloatingInput
+          label="Flexion (°)"
+          type="number"
+          inputMode="decimal"
+          value={reading.flexion}
+          onChange={(e) => onChange({ flexion: e.target.value })}
+        />
       </div>
     </section>
   )

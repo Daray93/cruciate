@@ -1,0 +1,41 @@
+.floating-field {
+  position: relative;
+}
+
+.floating-field input {
+  width: 100%;
+  padding: 22px var(--space-3) 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.floating-field input:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.floating-field label {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--ink-muted);
+  pointer-events: none;
+  transition: top 0.15s ease, transform 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+}
+
+.floating-field input:focus + label,
+.floating-field input:not(:placeholder-shown) + label {
+  top: 10px;
+  transform: translateY(0);
+  font-size: 0.7rem;
+}
+
+.floating-field input:focus + label {
+  color: var(--teal);
+}

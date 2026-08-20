@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
+import { FloatingInput } from './FloatingInput'
 import './AuthForm.css'
 
 type Mode = 'sign-in' | 'sign-up'
@@ -69,27 +70,23 @@ export function AuthForm() {
       </div>
 
       <form className="auth-form" onSubmit={handleSubmit}>
-        <label>
-          <span>Email</span>
-          <input
-            type="email"
-            required
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        <label>
-          <span>Password</span>
-          <input
-            type="password"
-            required
-            minLength={6}
-            autoComplete={isSignUp ? 'new-password' : 'current-password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+        <FloatingInput
+          label="Email"
+          type="email"
+          required
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <FloatingInput
+          label="Password"
+          type="password"
+          required
+          minLength={6}
+          autoComplete={isSignUp ? 'new-password' : 'current-password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
         {isSignUp && (
           <label className="waiver-checkbox">
