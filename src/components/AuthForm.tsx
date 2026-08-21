@@ -3,46 +3,40 @@ import type { FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { Alert } from './Alert'
 import { FloatingInput } from './FloatingInput'
+import { IconGoogle } from './icons'
 import { IllustrationFigureBase } from './illustrations'
 import './AuthForm.css'
 
-type Mode = 'sign-in' | 'sign-up'
-
 export function AuthForm() {
-  const [mode, setMode] = useState<Mode>('sign-up')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [waiverChecked, setWaiverChecked] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [info, setInfo] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [linkSent, setLinkSent] = useState(false)
 
-  const isSignUp = mode === 'sign-up'
+  async function handleGoogleSignIn() {
+    setError(null)
+    const { error: authError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    })
+    if (authError) setError(authError.message)
+  }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleMagicLink(e: FormEvent) {
     e.preventDefault()
     setError(null)
-    setInfo(null)
-
-    if (isSignUp && !waiverChecked) {
-      setError('You need to agree to the waiver before creating an account.')
-      return
-    }
-
     setSubmitting(true)
-    const { error: authError, data } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password })
+    const { error: authError } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    })
     setSubmitting(false)
 
     if (authError) {
       setError(authError.message)
       return
     }
-
-    if (isSignUp && !data.session) {
-      setInfo('Check your email to confirm your account, then sign in.')
-    }
+    setLinkSent(true)
   }
 
   return (
@@ -51,64 +45,42 @@ export function AuthForm() {
       <h1>Cruciate</h1>
       <p className="auth-subtitle">Track your ACL prehab and rehab program.</p>
 
-      <div className="auth-mode-tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={isSignUp}
-          className={`auth-mode-tab${isSignUp ? ' active' : ''}`}
-          onClick={() => setMode('sign-up')}
-        >
-          Sign up
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={!isSignUp}
-          className={`auth-mode-tab${!isSignUp ? ' active' : ''}`}
-          onClick={() => setMode('sign-in')}
-        >
-          Sign in
-        </button>
+      <button type="button" className="auth-google-button" onClick={() => void handleGoogleSignIn()}>
+        <IconGoogle />
+        Continue with Google
+      </button>
+
+      <div className="auth-divider">
+        <span>or</span>
       </div>
 
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <FloatingInput
-          label="Email"
-          type="email"
-          required
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <FloatingInput
-          label="Password"
-          type="password"
-          required
-          minLength={6}
-          autoComplete={isSignUp ? 'new-password' : 'current-password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      {error && <Alert variant="error">{error}</Alert>}
 
-        {isSignUp && (
-          <label className="waiver-checkbox">
-            <input
-              type="checkbox"
-              checked={waiverChecked}
-              onChange={(e) => setWaiverChecked(e.target.checked)}
-            />
-            <span>I understand this isn't medical advice - full details next.</span>
-          </label>
-        )}
+      {linkSent ? (
+        <>
+          <Alert variant="info">
+            We sent a sign-in link to <strong>{email}</strong>. Open it on this device to continue.
+          </Alert>
+          <button type="button" className="auth-use-different-email" onClick={() => setLinkSent(false)}>
+            Use a different email
+          </button>
+        </>
+      ) : (
+        <form className="auth-form" onSubmit={handleMagicLink}>
+          <FloatingInput
+            label="Email"
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        {error && <Alert variant="error">{error}</Alert>}
-        {info && <Alert variant="info">{info}</Alert>}
-
-        <button type="submit" className="auth-submit" disabled={submitting}>
-          {submitting ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}
-        </button>
-      </form>
+          <button type="submit" className="auth-submit" disabled={submitting}>
+            {submitting ? 'Sending…' : 'Continue with email'}
+          </button>
+        </form>
+      )}
     </div>
   )
 }
