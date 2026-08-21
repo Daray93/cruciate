@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Variants } from 'motion/react'
 import { todayIso } from '../lib/date'
@@ -13,8 +13,11 @@ import { MilestoneCheckIn } from './MilestoneCheckIn'
 import type { CheckinAnswer } from './MilestoneCheckIn'
 import './OnboardingWizard.css'
 
-const STEP_ORDER = ['name', 'greeting', 'age', 'track', 'surgery', 'checkin'] as const
+const STEP_ORDER = ['name', 'age', 'track', 'surgery', 'checkin'] as const
 type Step = (typeof STEP_ORDER)[number]
+
+const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1]
+const GREETING_MS = 1400
 
 // Ireland's digital age of consent under GDPR (Data Protection Act 2018) is
 // 16, not the GDPR default of 13 — processing a minor's data below this age
@@ -56,6 +59,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [finalized, setFinalized] = useState(false)
+  const [showGreeting, setShowGreeting] = useState(false)
 
   const ageValue = age === '' ? null : Number(age)
   const isUnderMinAge = ageValue !== null && ageValue < MIN_AGE
@@ -82,6 +86,23 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
     setDirection(-1)
     setStepIndex((i) => Math.max(i - 1, 0))
   }
+
+  // The name step hands off to a brief full-screen greeting instead of
+  // advancing straight to the next step — it's not a step of its own, it
+  // just appears and disappears like the app is saying hello.
+  function submitName() {
+    if (name.trim().length === 0) return
+    setShowGreeting(true)
+  }
+
+  useEffect(() => {
+    if (!showGreeting) return
+    const timer = setTimeout(() => {
+      setShowGreeting(false)
+      goNext()
+    }, GREETING_MS)
+    return () => clearTimeout(timer)
+  }, [showGreeting])
 
   async function writeProfile(currentPhase: PhaseId, advancedBy: PhaseAdvancedBy | null): Promise<boolean> {
     setError(null)
@@ -180,40 +201,13 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && name.trim().length > 0) {
+                if (e.key === 'Enter') {
                   e.preventDefault()
-                  goNext()
+                  submitName()
                 }
               }}
               autoFocus
             />
-          </motion.section>
-        )}
-
-        {step === 'greeting' && (
-          <motion.section
-            key="greeting"
-            className="onboarding-step onboarding-step-greeting"
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-          >
-            <h1>
-              Hey,{' '}
-              <motion.span
-                className="onboarding-greeting-name"
-                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.85)' }}
-                animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1)' }}
-                transition={{ type: 'spring', duration: 0.5, bounce: 0.25, delay: reduceMotion ? 0 : 0.15 }}
-              >
-                {name.trim()}
-              </motion.span>
-              .
-            </h1>
-            <p className="onboarding-hint">Let's get your program set up.</p>
           </motion.section>
         )}
 
@@ -393,12 +387,50 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
             </button>
           )}
           {step !== 'checkin' && (
-            <button type="button" className="onboarding-next" disabled={!canGoNext} onClick={goNext}>
+            <button
+              type="button"
+              className="onboarding-next"
+              disabled={!canGoNext}
+              onClick={step === 'name' ? submitName : goNext}
+            >
               Continue
             </button>
           )}
         </div>
       )}
+
+      <AnimatePresence>
+        {showGreeting && (
+          <motion.div
+            className="onboarding-greeting-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE_OUT }}
+          >
+            <motion.h1
+              initial={
+                reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(8px)', transform: 'translateY(8px)' }
+              }
+              animate={
+                reduceMotion ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' }
+              }
+              transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: EASE_OUT }}
+            >
+              Hey,{' '}
+              <motion.span
+                className="onboarding-greeting-name"
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.85)' }}
+                animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1)' }}
+                transition={{ type: 'spring', duration: 0.5, bounce: 0.25, delay: reduceMotion ? 0 : 0.15 }}
+              >
+                {name.trim()}
+              </motion.span>
+              .
+            </motion.h1>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

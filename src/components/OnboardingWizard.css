@@ -50,14 +50,23 @@
   font-size: 1.4rem;
 }
 
-.onboarding-step-greeting {
+.onboarding-greeting-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--space-5);
+  background: var(--bg);
   text-align: center;
 }
 
-.onboarding-step-greeting h1 {
-  font-size: clamp(1.8rem, 8vw, 2.4rem);
+.onboarding-greeting-overlay h1 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(2rem, 9vw, 3rem);
+  font-weight: 700;
 }
 
 .onboarding-greeting-name {
