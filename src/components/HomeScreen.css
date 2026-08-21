@@ -1,0 +1,59 @@
+.home-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.home-greeting-hi {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.home-phase-label {
+  margin: 0;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.home-phase-week {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.home-phase-criterion {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.checkin-prompt-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--teal);
+  background: var(--teal-soft);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.checkin-prompt-title {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.checkin-prompt-body {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.checkin-panel {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}

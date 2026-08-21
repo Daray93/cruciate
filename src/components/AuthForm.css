@@ -1,27 +1,8 @@
 .auth-form-wrap {
-  position: relative;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
   padding: var(--space-8) var(--space-5);
-  overflow: hidden;
-}
-
-.auth-form-illustration {
-  position: absolute;
-  top: -10%;
-  right: -12%;
-  width: 60%;
-  height: auto;
-  color: var(--ink);
-  opacity: 0.06;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.auth-form-wrap > *:not(.auth-form-illustration) {
-  position: relative;
-  z-index: 1;
 }
 
 .auth-form-wrap h1 {
@@ -99,6 +80,18 @@
   font-size: 0.85rem;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.auth-legal-links {
+  margin: var(--space-5) 0 0;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+}
+
+.auth-legal-links a {
+  color: var(--ink-muted);
+  text-decoration: underline;
 }
 
 .auth-submit {

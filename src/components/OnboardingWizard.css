@@ -1,0 +1,174 @@
+.onboarding-wrap {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-height: 100vh;
+}
+
+.onboarding-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.onboarding-progress-percent {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.onboarding-progress {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.onboarding-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.onboarding-dot.filled {
+  background: var(--teal);
+}
+
+.onboarding-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.onboarding-step h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.onboarding-step-greeting {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.onboarding-step-greeting h1 {
+  font-size: clamp(1.8rem, 8vw, 2.4rem);
+}
+
+.onboarding-greeting-name {
+  display: inline-block;
+  color: var(--teal);
+}
+
+.onboarding-hint {
+  margin: -var(--space-2) 0 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.onboarding-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.onboarding-choice-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.onboarding-choice-card.active {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+
+.onboarding-choice-card.active .onboarding-choice-title {
+  color: var(--teal);
+}
+
+.onboarding-choice-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.onboarding-choice-body {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.onboarding-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.onboarding-choice-row {
+  flex: 1;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.onboarding-choice-row.active {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.onboarding-nav {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.onboarding-back {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.onboarding-next {
+  flex: 1;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.onboarding-next:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Inside .onboarding-step (a vertical flex column), .onboarding-next appears
+   alone rather than sharing a row with .onboarding-back — flex: 1 there would
+   grow to fill the column's height, not its width, so pin it back down. */
+.onboarding-step > .onboarding-next {
+  flex: none;
+  width: 100%;
+}

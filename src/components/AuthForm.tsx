@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase'
 import { Alert } from './Alert'
 import { FloatingInput } from './FloatingInput'
 import { IconGoogle } from './icons'
-import { IllustrationFigureBase } from './illustrations'
 import './AuthForm.css'
 
 export function AuthForm() {
@@ -41,7 +40,6 @@ export function AuthForm() {
 
   return (
     <div className="auth-form-wrap">
-      <IllustrationFigureBase className="auth-form-illustration" />
       <h1>Cruciate</h1>
       <p className="auth-subtitle">Track your ACL prehab and rehab program.</p>
 
@@ -81,6 +79,10 @@ export function AuthForm() {
           </button>
         </form>
       )}
+
+      <p className="auth-legal-links">
+        By continuing you agree to our <a href="/terms">terms</a> and <a href="/privacy">privacy policy</a>.
+      </p>
     </div>
   )
 }

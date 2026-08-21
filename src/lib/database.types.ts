@@ -122,6 +122,114 @@ export interface Database {
         }
         Relationships: []
       }
+      user_profile: {
+        Row: {
+          user_id: string
+          name: string
+          age: number | null
+          track: string
+          surgery_timeframe: string | null
+          surgery_date: string | null
+          injury_date: string | null
+          current_phase: string
+          phase_advanced_at: string
+          phase_advanced_by: string | null
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          name: string
+          age?: number | null
+          track: string
+          surgery_timeframe?: string | null
+          surgery_date?: string | null
+          injury_date?: string | null
+          current_phase: string
+          phase_advanced_at?: string
+          phase_advanced_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          name?: string
+          age?: number | null
+          track?: string
+          surgery_timeframe?: string | null
+          surgery_date?: string | null
+          injury_date?: string | null
+          current_phase?: string
+          phase_advanced_at?: string
+          phase_advanced_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      milestone_checkins: {
+        Row: {
+          id: string
+          user_id: string
+          phase_target: string
+          question_id: string
+          response: string
+          passed: boolean
+          date: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          phase_target: string
+          question_id: string
+          response: string
+          passed: boolean
+          date?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          phase_target?: string
+          question_id?: string
+          response?: string
+          passed?: boolean
+          date?: string
+        }
+        Relationships: []
+      }
+      exercises: {
+        Row: {
+          id: string
+          name: string
+          track: string
+          phase: string
+          instructions: string | null
+          sets: number | null
+          reps_target: string | null
+          requires_load_clearance: boolean
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          name: string
+          track: string
+          phase: string
+          instructions?: string | null
+          sets?: number | null
+          reps_target?: string | null
+          requires_load_clearance?: boolean
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          name?: string
+          track?: string
+          phase?: string
+          instructions?: string | null
+          sets?: number | null
+          reps_target?: string | null
+          requires_load_clearance?: boolean
+          sort_order?: number
+        }
+        Relationships: []
+      }
     }
   }
 }
