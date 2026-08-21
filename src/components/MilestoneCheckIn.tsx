@@ -78,7 +78,7 @@ export function MilestoneCheckIn({ phase, title, onSubmit, onOverride }: Milesto
   if (result === 'failed') {
     return (
       <div className="milestone-result milestone-result-fail">
-        <p>Still working on it. That's normal. You'll stay in your current phase for now.</p>
+        <p>Still working on it. That's normal, and you'll get there.</p>
         <div className="milestone-result-actions">
           <button type="button" className="milestone-edit-answers" onClick={() => setResult(null)}>
             Go back and change an answer
