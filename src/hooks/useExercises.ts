@@ -17,8 +17,11 @@ export function useExercises(track: Track, phase: PhaseId) {
       .eq('track', track)
       .eq('phase', phase)
       .order('sort_order', { ascending: true })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
         if (cancelled) return
+        if (error) {
+          console.error('Failed to load exercises:', error.message)
+        }
         setExercises(
           (data ?? []).map((row) => ({
             id: row.id,

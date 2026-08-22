@@ -25,7 +25,8 @@ export function KneeAngleVisual({ angle, maxAngle }: KneeAngleVisualProps) {
         x2={KNEE.x}
         y2={KNEE.y + SHIN_LENGTH}
         className="knee-angle-bone knee-angle-shin"
-        style={{ transformOrigin: `${KNEE.x}px ${KNEE.y}px` }}
+        style={{ transformOrigin: `${KNEE.x}px ${KNEE.y}px`, transform: `rotate(${clamped}deg)` }}
+        initial={false}
         animate={{ transform: `rotate(${clamped}deg)` }}
         transition={reduceMotion ? { duration: 0.1 } : { type: 'spring', duration: 0.4, bounce: 0.1 }}
       />
