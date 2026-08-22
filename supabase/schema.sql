@@ -427,7 +427,7 @@ grant select, insert, update, delete on exercises_logged to authenticated;
 grant select, insert, update, delete on rom_readings to authenticated;
 grant select, insert, update, delete on clearance to authenticated;
 grant select, insert, update, delete on waiver_acceptances to authenticated;
-grant select, insert, update on user_profile to authenticated;
+grant select, insert, update, delete on user_profile to authenticated;
 grant select, insert, update, delete on milestone_checkins to authenticated;
 grant select on exercises to authenticated;
 
@@ -501,6 +501,9 @@ create policy "clearance_insert_own" on clearance
 create policy "clearance_update_own" on clearance
   for update to authenticated
   using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "clearance_delete_own" on clearance
+  for delete to authenticated
+  using ((select auth.uid()) = user_id);
 
 create policy "waiver_acceptances_select_own" on waiver_acceptances
   for select to authenticated
@@ -511,6 +514,9 @@ create policy "waiver_acceptances_insert_own" on waiver_acceptances
 create policy "waiver_acceptances_update_own" on waiver_acceptances
   for update to authenticated
   using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "waiver_acceptances_delete_own" on waiver_acceptances
+  for delete to authenticated
+  using ((select auth.uid()) = user_id);
 
 create policy "user_profile_select_own" on user_profile
   for select to authenticated
@@ -521,6 +527,9 @@ create policy "user_profile_insert_own" on user_profile
 create policy "user_profile_update_own" on user_profile
   for update to authenticated
   using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "user_profile_delete_own" on user_profile
+  for delete to authenticated
+  using ((select auth.uid()) = user_id);
 
 create policy "milestone_checkins_select_own" on milestone_checkins
   for select to authenticated
