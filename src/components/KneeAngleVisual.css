@@ -11,6 +11,16 @@
   stroke-linecap: round;
 }
 
+.knee-angle-shin-group {
+  transition: transform 0.4s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knee-angle-shin-group {
+    transition: none;
+  }
+}
+
 .knee-angle-foot {
   stroke-width: 5;
   opacity: 0.9;

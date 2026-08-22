@@ -1,0 +1,41 @@
+.profile-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.profile-track-label {
+  margin: 0;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.profile-track-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.profile-error {
+  margin: 0;
+  color: var(--red);
+  font-size: 0.85rem;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile-field-label {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}

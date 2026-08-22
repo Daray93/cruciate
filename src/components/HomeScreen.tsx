@@ -1,14 +1,11 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import type { Theme } from '../hooks/useTheme'
 import { formatLongDate, formatRelativeToToday } from '../lib/date'
-import { supabase } from '../lib/supabase'
 import { isTimeEligibleForNextPhase, nextPhase, PHASES, weeksPostOp } from '../lib/phases'
 import { useMilestoneCheckins } from '../hooks/useMilestoneCheckins'
 import type { UserProfile } from '../types'
 import { IconX } from './icons'
 import { MilestoneCheckIn } from './MilestoneCheckIn'
-import { OverflowMenu } from './OverflowMenu'
 import './HomeScreen.css'
 
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1]
@@ -17,21 +14,11 @@ interface HomeScreenProps {
   userId: string
   profile: UserProfile
   onProfileChange: () => void
-  theme: Theme
-  onToggleTheme: () => void
   onOpenRehab: () => void
   onOpenProgress: () => void
 }
 
-export function HomeScreen({
-  userId,
-  profile,
-  onProfileChange,
-  theme,
-  onToggleTheme,
-  onOpenRehab,
-  onOpenProgress,
-}: HomeScreenProps) {
+export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOpenProgress }: HomeScreenProps) {
   const { current_phase: currentPhase, track } = profile
   const phaseDef = PHASES[currentPhase]
   const [checkinOpen, setCheckinOpen] = useState(false)
@@ -58,10 +45,9 @@ export function HomeScreen({
   const injuryText = profile.injury_date ? `Injury ${formatRelativeToToday(profile.injury_date)}` : null
 
   return (
-    <main className="app-shell">
+    <main className="app-shell app-shell-with-tabs">
       <header className="app-header">
         <h1>Cruciate</h1>
-        <OverflowMenu theme={theme} onToggleTheme={onToggleTheme} onSignOut={() => void supabase.auth.signOut()} />
       </header>
 
       <section className="home-greeting">

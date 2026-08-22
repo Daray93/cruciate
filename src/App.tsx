@@ -16,8 +16,8 @@ function App() {
 
   return (
     <>
-      {/* Home screen owns its own theme control inside its overflow menu, so
-          the floating one would be a redundant second control once signed in. */}
+      {/* The Settings tab owns theme control once signed in, so the floating
+          toggle would be a redundant second control there. */}
       {!isHome && (
         <div className="floating-theme-toggle">
           <ThemeToggle theme={theme} onToggle={toggleTheme} />

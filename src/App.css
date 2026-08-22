@@ -8,6 +8,12 @@
   gap: var(--space-7);
 }
 
+/* Extra bottom clearance on screens shown under the fixed bottom tab bar,
+   so the last bit of content isn't hidden behind it. */
+.app-shell-with-tabs {
+  padding-bottom: calc(var(--space-8) + 64px + env(safe-area-inset-bottom));
+}
+
 .app-header {
   display: flex;
   align-items: center;

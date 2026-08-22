@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from 'motion/react'
 import './KneeAngleVisual.css'
 
 interface KneeAngleVisualProps {
@@ -34,7 +33,6 @@ function describeArc(center: { x: number; y: number }, radius: number, endAngle:
 }
 
 export function KneeAngleVisual({ angle, maxAngle }: KneeAngleVisualProps) {
-  const reduceMotion = useReducedMotion()
   const clamped = Math.max(0, Math.min(maxAngle, angle))
 
   return (
@@ -48,12 +46,14 @@ export function KneeAngleVisual({ angle, maxAngle }: KneeAngleVisualProps) {
       <line x1={HIP.x} y1={HIP.y} x2={KNEE.x} y2={KNEE.y} className="knee-angle-bone" />
       <circle cx={HIP.x} cy={HIP.y} r={3} className="knee-angle-joint knee-angle-joint-minor" />
 
-      {/* Shin + foot, pivoting together around the knee */}
-      <motion.g
-        style={{ transformOrigin: `${KNEE.x}px ${KNEE.y}px`, transform: `rotate(${clamped}deg)` }}
-        initial={false}
-        animate={{ transform: `rotate(${clamped}deg)` }}
-        transition={reduceMotion ? { duration: 0.1 } : { type: 'spring', duration: 0.5, bounce: 0.15 }}
+      {/* Shin + foot, pivoting together around the knee. Uses SVG's own
+          three-argument rotate(angle, cx, cy) so the pivot point is embedded
+          directly in the transform — CSS transform-origin on SVG elements is
+          notoriously inconsistent about which box it measures from, which is
+          exactly what was making this drift away from the knee as it rotated. */}
+      <g
+        className="knee-angle-shin-group"
+        transform={`rotate(${clamped} ${KNEE.x} ${KNEE.y})`}
       >
         <line x1={KNEE.x} y1={KNEE.y} x2={KNEE.x} y2={KNEE.y + SHIN_LENGTH} className="knee-angle-bone" />
         <line
@@ -63,7 +63,7 @@ export function KneeAngleVisual({ angle, maxAngle }: KneeAngleVisualProps) {
           y2={KNEE.y + SHIN_LENGTH}
           className="knee-angle-bone knee-angle-foot"
         />
-      </motion.g>
+      </g>
 
       {/* Knee pivot, drawn last so it sits on top of both bones */}
       <circle cx={KNEE.x} cy={KNEE.y} r={5} className="knee-angle-joint" />

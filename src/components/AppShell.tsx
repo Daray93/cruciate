@@ -1,14 +1,20 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Theme } from '../hooks/useTheme'
+import { supabase } from '../lib/supabase'
 import type { UserProfile } from '../types'
+import type { MainTab } from './BottomTabBar'
+import { BodyVisualization } from './BodyVisualization'
+import { BottomTabBar } from './BottomTabBar'
 import { HomeScreen } from './HomeScreen'
+import { ProfilePage } from './ProfilePage'
 import { ProgressScreen } from './ProgressScreen'
+import { SettingsPage } from './SettingsPage'
 import { TodayRehab } from './TodayRehab'
 
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1]
 
-type Screen = 'home' | 'rehab' | 'progress'
+type Screen = MainTab | 'rehab' | 'progress'
 
 interface AppShellProps {
   userId: string
@@ -22,29 +28,40 @@ export function AppShell({ userId, profile, onProfileChange, theme, onToggleThem
   const [screen, setScreen] = useState<Screen>('home')
   const reduceMotion = useReducedMotion()
 
+  const showTabBar = screen === 'home' || screen === 'body' || screen === 'profile' || screen === 'settings'
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={screen}
-        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'translateY(12px)' }}
-        animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'translateY(0px)' }}
-        exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'translateY(-12px)' }}
-        transition={{ duration: 0.3, ease: EASE_OUT }}
-      >
-        {screen === 'home' && (
-          <HomeScreen
-            userId={userId}
-            profile={profile}
-            onProfileChange={onProfileChange}
-            theme={theme}
-            onToggleTheme={onToggleTheme}
-            onOpenRehab={() => setScreen('rehab')}
-            onOpenProgress={() => setScreen('progress')}
-          />
-        )}
-        {screen === 'rehab' && <TodayRehab userId={userId} profile={profile} onBack={() => setScreen('home')} />}
-        {screen === 'progress' && <ProgressScreen userId={userId} onBack={() => setScreen('home')} />}
-      </motion.div>
-    </AnimatePresence>
+    <>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={screen}
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'translateY(12px)' }}
+          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'translateY(0px)' }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'translateY(-12px)' }}
+          transition={{ duration: 0.3, ease: EASE_OUT }}
+        >
+          {screen === 'home' && (
+            <HomeScreen
+              userId={userId}
+              profile={profile}
+              onProfileChange={onProfileChange}
+              onOpenRehab={() => setScreen('rehab')}
+              onOpenProgress={() => setScreen('progress')}
+            />
+          )}
+          {screen === 'body' && <BodyVisualization userId={userId} />}
+          {screen === 'profile' && (
+            <ProfilePage userId={userId} profile={profile} onProfileChange={onProfileChange} />
+          )}
+          {screen === 'settings' && (
+            <SettingsPage theme={theme} onToggleTheme={onToggleTheme} onSignOut={() => void supabase.auth.signOut()} />
+          )}
+          {screen === 'rehab' && <TodayRehab userId={userId} profile={profile} onBack={() => setScreen('home')} />}
+          {screen === 'progress' && <ProgressScreen userId={userId} onBack={() => setScreen('home')} />}
+        </motion.div>
+      </AnimatePresence>
+
+      {showTabBar && <BottomTabBar active={screen as MainTab} onSelect={setScreen} />}
+    </>
   )
 }
