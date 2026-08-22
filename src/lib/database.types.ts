@@ -210,6 +210,7 @@ export interface Database {
           equipment: string | null
           contraindications: string | null
           requires_load_clearance: boolean
+          hold_seconds: number | null
           sort_order: number
         }
         Insert: {
@@ -227,6 +228,7 @@ export interface Database {
           equipment?: string | null
           contraindications?: string | null
           requires_load_clearance?: boolean
+          hold_seconds?: number | null
           sort_order?: number
         }
         Update: {
@@ -244,6 +246,7 @@ export interface Database {
           equipment?: string | null
           contraindications?: string | null
           requires_load_clearance?: boolean
+          hold_seconds?: number | null
           sort_order?: number
         }
         Relationships: []

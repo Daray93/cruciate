@@ -38,7 +38,7 @@ Your data is stored with Supabase (database and authentication) and the app is h
 
 How long we keep it
 
-We keep your data until you ask us to delete it. There's no self-serve delete button yet, contact us using the details below and we'll remove your account and data.
+We keep your data until you delete it. You can delete your account and all your data yourself from Settings, or contact us using the details below.
 
 Age
 
@@ -54,5 +54,5 @@ If this policy changes, we'll update the date at the top.
 
 Contact
 
-[contact email to be added]
+daraphillips.design@gmail.com
 `.trim()

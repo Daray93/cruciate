@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useUserProfile } from '../hooks/useUserProfile'
 import { useWaiverStatus } from '../hooks/useWaiverStatus'
 import type { UserProfile } from '../types'
+import { AppSkeleton } from './AppSkeleton'
 import { OnboardingWizard } from './OnboardingWizard'
 import { SplashPage } from './SplashPage'
 import { WaiverScreen } from './WaiverScreen'
@@ -26,7 +27,7 @@ export function AuthGate({ children, onHomeChange }: AuthGateProps) {
   }, [isHome, onHomeChange])
 
   if (authLoading) {
-    return <div className="full-screen-message">Loading…</div>
+    return <AppSkeleton />
   }
 
   if (!user) {
@@ -34,7 +35,7 @@ export function AuthGate({ children, onHomeChange }: AuthGateProps) {
   }
 
   if (waiverStatus === 'loading') {
-    return <div className="full-screen-message">Loading…</div>
+    return <AppSkeleton />
   }
 
   if (waiverStatus === 'needed') {
@@ -42,7 +43,7 @@ export function AuthGate({ children, onHomeChange }: AuthGateProps) {
   }
 
   if (profileStatus === 'loading') {
-    return <div className="full-screen-message">Loading…</div>
+    return <AppSkeleton />
   }
 
   if (profileStatus === 'missing' || !profile) {

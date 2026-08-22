@@ -1,0 +1,241 @@
+.phases-intro {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.phase-roadmap {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) 0;
+  display: flex;
+  align-items: center;
+}
+
+.phase-roadmap-node {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.phase-roadmap-node:last-child {
+  flex: 0 0 auto;
+}
+
+.phase-roadmap-dot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.phase-roadmap-dot.done {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.phase-roadmap-dot.current {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: var(--bg);
+  animation: phase-roadmap-pulse 2s ease-in-out infinite;
+}
+
+.phase-roadmap-dot-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.phase-roadmap-dot:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.phase-roadmap-connector {
+  flex: 1;
+  height: 2px;
+  margin: 0 2px;
+  background: var(--border);
+}
+
+.phase-roadmap-connector.filled {
+  background: var(--teal);
+}
+
+@keyframes phase-roadmap-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--teal-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--teal-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase-roadmap-dot.current {
+    animation: none;
+  }
+}
+
+.phases-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.phase-card {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.phase-card.current {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+
+.phase-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.phase-card-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.phase-card-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.phase-card.current .phase-card-label {
+  color: var(--teal);
+}
+
+.phase-card-title {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.phase-card-current-badge {
+  flex-shrink: 0;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--teal);
+  color: var(--bg);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.phase-card-criterion {
+  margin: var(--space-2) 0 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.phase-card-detail {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.phase-exercise-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.phase-exercise-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+}
+
+.phase-exercise-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.phase-exercise-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.phase-exercise-equipment {
+  font-size: 0.72rem;
+  color: var(--amber);
+}
+
+.phase-exercise-target {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+}
+
+.phase-exercise-empty {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+}
+
+.phase-switch-button {
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--teal);
+  background: none;
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.phase-switch-button:hover {
+  background: var(--teal-soft);
+}
+
+.phase-switch-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

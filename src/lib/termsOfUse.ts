@@ -34,5 +34,5 @@ If these terms change, we'll update the date at the top.
 
 Contact
 
-[contact email to be added]
+daraphillips.design@gmail.com
 `.trim()

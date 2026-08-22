@@ -3,8 +3,8 @@ import { supabase } from '../lib/supabase'
 import type { PhaseId, Track } from '../lib/phases'
 import type { ExerciseCategory, ExerciseDef } from '../types'
 
-export function useExercises(track: Track, phase: PhaseId) {
-  const [exercises, setExercises] = useState<ExerciseDef[]>([])
+export function useExercisesByTrack(track: Track) {
+  const [exercisesByPhase, setExercisesByPhase] = useState<Partial<Record<PhaseId, ExerciseDef[]>>>({})
 
   useEffect(() => {
     let cancelled = false
@@ -12,18 +12,20 @@ export function useExercises(track: Track, phase: PhaseId) {
     supabase
       .from('exercises')
       .select(
-        'id, name, category, instructions, purpose, cue, sets, reps_target, frequency_note, equipment, contraindications, requires_load_clearance, hold_seconds',
+        'id, name, category, instructions, purpose, cue, sets, reps_target, frequency_note, equipment, contraindications, requires_load_clearance, hold_seconds, phase',
       )
       .eq('track', track)
-      .eq('phase', phase)
       .order('sort_order', { ascending: true })
       .then(({ data, error }) => {
         if (cancelled) return
         if (error) {
           console.error('Failed to load exercises:', error.message)
         }
-        setExercises(
-          (data ?? []).map((row) => ({
+
+        const grouped: Partial<Record<PhaseId, ExerciseDef[]>> = {}
+        for (const row of data ?? []) {
+          const phase = row.phase as PhaseId
+          const def: ExerciseDef = {
             id: row.id,
             name: row.name,
             category: (row.category as ExerciseCategory | null) ?? null,
@@ -37,14 +39,16 @@ export function useExercises(track: Track, phase: PhaseId) {
             contraindications: row.contraindications ?? undefined,
             requiresLoadClearance: row.requires_load_clearance,
             holdSeconds: row.hold_seconds ?? undefined,
-          })),
-        )
+          }
+          ;(grouped[phase] ??= []).push(def)
+        }
+        setExercisesByPhase(grouped)
       })
 
     return () => {
       cancelled = true
     }
-  }, [track, phase])
+  }, [track])
 
-  return { exercises }
+  return { exercisesByPhase }
 }

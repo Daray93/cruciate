@@ -1,0 +1,56 @@
+.post-workout-rom {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.post-workout-rom-submit {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.post-workout-rom-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.post-workout-rom-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--teal);
+  background: var(--teal-soft);
+}
+
+.post-workout-rom-summary-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--teal);
+}
+
+.post-workout-rom-summary-body {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.post-workout-rom-progress-link {
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
+  cursor: pointer;
+}

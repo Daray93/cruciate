@@ -1,0 +1,14 @@
+.knee-angle-visual-supine {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  aspect-ratio: 180 / 100;
+  color: var(--ink);
+  overflow: visible;
+}
+
+.knee-angle-supine-bed {
+  stroke: var(--border);
+  stroke-width: 2;
+  stroke-dasharray: 3 4;
+}

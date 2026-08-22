@@ -36,6 +36,7 @@ export interface ExerciseDef {
   equipment?: string
   contraindications?: string
   requiresLoadClearance?: boolean
+  holdSeconds?: number
 }
 
 export interface LoggedExercise {

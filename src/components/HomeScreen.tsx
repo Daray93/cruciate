@@ -15,10 +15,10 @@ interface HomeScreenProps {
   profile: UserProfile
   onProfileChange: () => void
   onOpenRehab: () => void
-  onOpenProgress: () => void
+  onOpenProfile: () => void
 }
 
-export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOpenProgress }: HomeScreenProps) {
+export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOpenProfile }: HomeScreenProps) {
   const { current_phase: currentPhase, track } = profile
   const phaseDef = PHASES[currentPhase]
   const [checkinOpen, setCheckinOpen] = useState(false)
@@ -48,6 +48,9 @@ export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOp
     <main className="app-shell app-shell-with-tabs">
       <header className="app-header">
         <h1>Cruciate</h1>
+        <button type="button" className="home-avatar" aria-label="Open profile" onClick={onOpenProfile}>
+          {profile.name.trim().charAt(0).toUpperCase()}
+        </button>
       </header>
 
       <section className="home-greeting">
@@ -69,7 +72,7 @@ export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOp
             </motion.span>
           </motion.p>
 
-          <p className="home-date">{formatLongDate()}</p>
+          <p className="home-date">It's {formatLongDate()}</p>
         </div>
 
         <div className="home-status">
@@ -136,10 +139,6 @@ export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOp
       <button type="button" className="home-rehab-cta" onClick={onOpenRehab}>
         <span className="home-rehab-cta-title">Complete today's rehab</span>
         <span className="home-rehab-cta-body">Exercises, range of motion, and today's check-in</span>
-      </button>
-
-      <button type="button" className="home-progress-link" onClick={onOpenProgress}>
-        View progress
       </button>
     </main>
   )

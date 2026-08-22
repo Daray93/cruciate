@@ -243,7 +243,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
             exit="exit"
             transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
           >
-            <h1>Where are you in your journey?</h1>
+            <h1>Where are you in your ACL journey?</h1>
             <div className="onboarding-choice-grid">
               <button
                 type="button"

@@ -1,0 +1,14 @@
+.knee-angle-visual-seated {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  aspect-ratio: 150 / 130;
+  color: var(--ink);
+  overflow: visible;
+}
+
+.knee-angle-seated-floor {
+  stroke: var(--border);
+  stroke-width: 2;
+  stroke-dasharray: 3 4;
+}

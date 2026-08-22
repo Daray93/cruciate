@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { IconCheck } from './icons'
+import { Skeleton } from './Skeleton'
 import './SessionDetail.css'
 
 interface ExerciseRow {
@@ -36,7 +37,16 @@ export function SessionDetail({ sessionId }: { sessionId: string }) {
   }, [sessionId])
 
   if (!exercises) {
-    return <p className="session-detail-loading">Loading…</p>
+    return (
+      <div className="session-detail session-detail-skeleton" aria-label="Loading" aria-busy="true">
+        <Skeleton width="45%" height={14} />
+        <div className="session-detail-list">
+          <Skeleton width="70%" height={14} />
+          <Skeleton width="60%" height={14} />
+          <Skeleton width="65%" height={14} />
+        </div>
+      </div>
+    )
   }
 
   return (

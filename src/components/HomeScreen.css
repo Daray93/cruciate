@@ -140,18 +140,26 @@
   opacity: 0.85;
 }
 
-.home-progress-link {
-  align-self: center;
-  padding: var(--space-2);
+.home-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   border: none;
-  background: none;
-  color: var(--ink-muted);
-  font-weight: 600;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
   font-size: 0.9rem;
-  text-decoration: underline;
   cursor: pointer;
 }
 
-.home-progress-link:hover {
-  color: var(--ink);
+.home-avatar:hover {
+  opacity: 0.9;
+}
+
+.home-avatar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
 }

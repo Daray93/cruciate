@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import type { Variants } from 'motion/react'
 import { nextPhase, PHASE_QUESTIONS, programmeLevelPhrase } from '../lib/phases'
-import type { PhaseId } from '../lib/phases'
-import { IconCheck, IconInfoCircle } from './icons'
+import type { MilestoneQuestion, PhaseId } from '../lib/phases'
+import { CelebrationOverlay } from './CelebrationOverlay'
+import { IconCheck } from './icons'
+import { MilestoneRomStep } from './MilestoneRomStep'
 import './MilestoneCheckIn.css'
 
 export interface CheckinAnswer {
@@ -20,70 +24,122 @@ interface MilestoneCheckInProps {
 
 type Result = 'passed' | 'failed' | null
 
+const LOGGED_REACTIONS = [
+  'Nice one!',
+  'Great job!',
+  'Logged!',
+  'Nailed it!',
+  'Solid work!',
+  'You got it!',
+  'Boom, logged!',
+  'Way to go!',
+  'Awesome!',
+  'Keep it up!',
+  "That's the one!",
+  'Locked in!',
+  'Fantastic!',
+  'Well done!',
+  'Nice progress!',
+  'Look at you go!',
+  'Sweet!',
+  'Good stuff!',
+  'Right on!',
+  'Great effort!',
+]
+
+const stepVariants: Variants = {
+  enter: (dir: 1 | -1) => ({ opacity: 0, transform: `translateX(${dir * 24}px)` }),
+  center: { opacity: 1, transform: 'translateX(0px)' },
+  exit: (dir: 1 | -1) => ({ opacity: 0, transform: `translateX(${dir * -24}px)` }),
+}
+const stepVariantsReduced: Variants = {
+  enter: { opacity: 0 },
+  center: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
 export function MilestoneCheckIn({ phase, title, onSubmit, onContinue }: MilestoneCheckInProps) {
   const questions = PHASE_QUESTIONS[phase]
-  const [answers, setAnswers] = useState<Record<string, boolean | null>>(() =>
-    Object.fromEntries(questions.map((q) => [q.id, null])),
-  )
+  const [stepIndex, setStepIndex] = useState(0)
+  const [direction, setDirection] = useState<1 | -1>(1)
+  const [yesNo, setYesNo] = useState<Record<string, boolean>>({})
+  const [romValue, setRomValue] = useState<Record<string, number>>({})
+  const [romTouched, setRomTouched] = useState<Record<string, boolean>>({})
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<Result>(null)
-  const [openHelpId, setOpenHelpId] = useState<string | null>(null)
+  const [celebrating, setCelebrating] = useState(false)
+  const reduceMotion = useReducedMotion()
+  const variants = reduceMotion ? stepVariantsReduced : stepVariants
 
-  const allAnswered = questions.every((q) => answers[q.id] !== null)
+  const question = questions[stepIndex]
+  const isLastStep = stepIndex === questions.length - 1
+  const canContinue = question.rom ? romTouched[question.id] === true : yesNo[question.id] !== undefined
 
-  useEffect(() => {
-    if (!openHelpId) return
-    function handleClickOutside(e: MouseEvent) {
-      if (!(e.target instanceof Element) || !e.target.closest('.milestone-info')) {
-        setOpenHelpId(null)
-      }
-    }
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [openHelpId])
+  function goBack() {
+    setDirection(-1)
+    setStepIndex((i) => Math.max(i - 1, 0))
+  }
 
-  function answerQuestion(questionId: string, value: boolean) {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }))
-    setOpenHelpId(null)
+  function answerYesNo(value: boolean) {
+    setYesNo((prev) => ({ ...prev, [question.id]: value }))
+  }
+
+  function answerRom(value: number) {
+    setRomValue((prev) => ({ ...prev, [question.id]: value }))
+    setRomTouched((prev) => ({ ...prev, [question.id]: true }))
   }
 
   async function handleSubmit() {
     setSubmitting(true)
-    const payload: CheckinAnswer[] = questions.map((q) => ({
-      questionId: q.id,
-      response: answers[q.id] ? 'yes' : 'no',
-      passed: Boolean(answers[q.id]),
-    }))
+    const payload: CheckinAnswer[] = questions.map((q) => {
+      if (q.rom) {
+        const angle = romValue[q.id] ?? 0
+        const passed = q.rom.direction === 'extension' ? angle <= q.rom.passThreshold : angle >= q.rom.passThreshold
+        return { questionId: q.id, response: `${angle}`, passed }
+      }
+      const value = Boolean(yesNo[q.id])
+      return { questionId: q.id, response: value ? 'yes' : 'no', passed: value }
+    })
     const { passed } = await onSubmit(payload)
     setSubmitting(false)
     setResult(passed ? 'passed' : 'failed')
   }
 
-  if (result === 'passed') {
-    const resultingPhase = nextPhase(phase) ?? phase
-    return (
-      <div className="milestone-result milestone-result-pass">
-        <IconCheck className="milestone-result-icon" />
-        <div>
-          <p>Nice work. Based on your answers, {programmeLevelPhrase(resultingPhase)}.</p>
-          {onContinue && (
-            <button type="button" className="milestone-continue" onClick={onContinue}>
-              Continue
-            </button>
-          )}
-        </div>
-      </div>
-    )
+  function advanceStep() {
+    if (isLastStep) {
+      void handleSubmit()
+      return
+    }
+    setDirection(1)
+    setStepIndex((i) => Math.min(i + 1, questions.length - 1))
   }
 
-  if (result === 'failed') {
+  // ROM answers get a beat of celebration before moving on; plain yes/no
+  // answers advance immediately since there's nothing to "log".
+  function handleContinue() {
+    if (question.rom) {
+      setCelebrating(true)
+      return
+    }
+    advanceStep()
+  }
+
+  function handleCelebrationDone() {
+    setCelebrating(false)
+    advanceStep()
+  }
+
+  if (result) {
+    const startingPhase = result === 'passed' ? (nextPhase(phase) ?? phase) : phase
     return (
-      <div className="milestone-result milestone-result-fail">
-        <p>Still working on it. That's normal, and you'll get there. For now, {programmeLevelPhrase(phase)}.</p>
-        <div className="milestone-result-actions">
-          <button type="button" className="milestone-edit-answers" onClick={() => setResult(null)}>
-            Go back and change an answer
-          </button>
+      <div className="milestone-result">
+        <IconCheck className="milestone-result-icon" />
+        <div>
+          <p className="milestone-result-title">Check-in complete!</p>
+          <p>
+            Based on your answers, {programmeLevelPhrase(startingPhase)}. You can always switch phases later from
+            the Phases tab.
+          </p>
           {onContinue && (
             <button type="button" className="milestone-continue" onClick={onContinue}>
               Continue
@@ -97,48 +153,76 @@ export function MilestoneCheckIn({ phase, title, onSubmit, onContinue }: Milesto
   return (
     <div className="milestone-checkin">
       {title && <p className="milestone-title">{title}</p>}
-      <ul className="milestone-questions">
-        {questions.map((question) => (
-          <li key={question.id} className="milestone-question">
-            <p>
-              {question.prompt}
-              <span className={`milestone-info${openHelpId === question.id ? ' open' : ''}`}>
+
+      <div className="milestone-progress-wrap">
+        <p className="milestone-progress-percent">
+          Question {stepIndex + 1} of {questions.length}
+        </p>
+        <div className="milestone-progress" aria-hidden="true">
+          {questions.map((q, i) => (
+            <span key={q.id} className={`milestone-dot${i <= stepIndex ? ' filled' : ''}`} />
+          ))}
+        </div>
+      </div>
+
+      <AnimatePresence mode="wait" initial={false} custom={direction}>
+        <motion.div
+          key={question.id}
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+        >
+          {question.rom ? (
+            <MilestoneRomStep
+              question={question as MilestoneQuestion & { rom: NonNullable<MilestoneQuestion['rom']> }}
+              value={romValue[question.id] ?? Math.round(question.rom.max / 2)}
+              onChange={answerRom}
+            />
+          ) : (
+            <div className="milestone-question-step">
+              <p className="milestone-question-prompt">{question.prompt}</p>
+              <p className="milestone-question-help">{question.help}</p>
+              <div className="milestone-answer-buttons">
                 <button
                   type="button"
-                  className="milestone-info-trigger"
-                  aria-label={`What does "${question.prompt}" mean?`}
-                  aria-expanded={openHelpId === question.id}
-                  onClick={() => setOpenHelpId((prev) => (prev === question.id ? null : question.id))}
+                  className={`milestone-answer${yesNo[question.id] === true ? ' active' : ''}`}
+                  onClick={() => answerYesNo(true)}
                 >
-                  <IconInfoCircle />
+                  Yes
                 </button>
-                <span className="milestone-info-tooltip" role="note">
-                  {question.help}
-                </span>
-              </span>
-            </p>
-            <div className="milestone-answer-buttons">
-              <button
-                type="button"
-                className={`milestone-answer${answers[question.id] === true ? ' active' : ''}`}
-                onClick={() => answerQuestion(question.id, true)}
-              >
-                Yes
-              </button>
-              <button
-                type="button"
-                className={`milestone-answer${answers[question.id] === false ? ' active' : ''}`}
-                onClick={() => answerQuestion(question.id, false)}
-              >
-                No
-              </button>
+                <button
+                  type="button"
+                  className={`milestone-answer${yesNo[question.id] === false ? ' active' : ''}`}
+                  onClick={() => answerYesNo(false)}
+                >
+                  No
+                </button>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
-      <button type="button" className="milestone-submit" disabled={!allAnswered || submitting} onClick={() => void handleSubmit()}>
-        {submitting ? 'Saving…' : 'Submit check-in'}
-      </button>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="milestone-nav">
+        {stepIndex > 0 && (
+          <button type="button" className="milestone-back" onClick={goBack} disabled={celebrating}>
+            Back
+          </button>
+        )}
+        <button
+          type="button"
+          className="milestone-submit"
+          disabled={!canContinue || submitting || celebrating}
+          onClick={handleContinue}
+        >
+          {submitting ? 'Saving…' : isLastStep ? 'Submit check-in' : 'Continue'}
+        </button>
+      </div>
+
+      <CelebrationOverlay show={celebrating} reactions={LOGGED_REACTIONS} onDone={handleCelebrationDone} />
     </div>
   )
 }

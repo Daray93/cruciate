@@ -58,3 +58,15 @@
   stroke-linecap: round;
   opacity: 0.5;
 }
+
+.knee-angle-label {
+  font-size: 8px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  fill: var(--ink-muted);
+  text-anchor: middle;
+}
+
+.knee-angle-torso {
+  opacity: 0.5;
+}

@@ -1,4 +1,5 @@
 .milestone-checkin {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -10,98 +11,63 @@
   font-size: 0.9rem;
 }
 
-.milestone-questions {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.milestone-progress-wrap {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-.milestone-question {
-  position: relative;
-}
-
-.milestone-question p {
-  margin: 0 0 var(--space-2);
-  display: flex;
-  align-items: center;
   gap: var(--space-1);
+}
+
+.milestone-progress-percent {
+  margin: 0;
+  font-size: 0.75rem;
   font-weight: 600;
-}
-
-.milestone-info {
-  display: inline-flex;
-}
-
-.milestone-info-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: none;
   color: var(--ink-muted);
-  cursor: pointer;
-  flex-shrink: 0;
 }
 
-.milestone-info-trigger svg {
-  width: 16px;
-  height: 16px;
+.milestone-progress {
+  display: flex;
+  gap: var(--space-1);
 }
 
-.milestone-info-trigger:hover,
-.milestone-info-trigger:focus-visible {
-  color: var(--teal);
+.milestone-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
 }
 
-.milestone-info-tooltip {
-  position: absolute;
-  z-index: 5;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  margin-bottom: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface-raised);
+.milestone-dot.filled {
+  background: var(--teal);
+}
+
+.milestone-question-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.milestone-question-prompt {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.milestone-question-help {
+  margin: 0;
   color: var(--ink-muted);
-  font-weight: 400;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   line-height: 1.4;
-  text-align: left;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(4px);
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
-}
-
-.milestone-info:hover .milestone-info-tooltip,
-.milestone-info:focus-within .milestone-info-tooltip,
-.milestone-info.open .milestone-info-tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 .milestone-answer-buttons {
   display: flex;
   gap: var(--space-2);
+  margin-top: var(--space-2);
 }
 
 .milestone-answer {
   flex: 1;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--surface);
@@ -116,7 +82,23 @@
   color: var(--teal);
 }
 
+.milestone-nav {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.milestone-back {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--ink-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .milestone-submit {
+  flex: 1;
   padding: var(--space-3);
   border-radius: var(--radius-md);
   border: none;
@@ -134,64 +116,44 @@
 
 .milestone-result {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   gap: var(--space-3);
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-}
-
-.milestone-result p {
-  margin: 0;
-}
-
-.milestone-result-pass {
-  flex-direction: row;
-  align-items: flex-start;
-  border-color: var(--teal);
+  border: 1px solid var(--teal);
   background: var(--teal-soft);
-  color: var(--teal);
 }
 
-.milestone-result-pass > div {
+.milestone-result > div {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
+}
+
+.milestone-result p {
+  margin: 0;
+  color: var(--ink);
+}
+
+.milestone-result-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--teal);
 }
 
 .milestone-result-icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-}
-
-.milestone-result-fail {
-  background: var(--surface-raised);
-  color: var(--ink-muted);
-}
-
-.milestone-result-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-}
-
-.milestone-edit-answers {
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--ink-muted);
-  font-size: 0.85rem;
-  text-decoration: underline;
-  cursor: pointer;
+  color: var(--teal);
 }
 
 .milestone-continue {
-  align-self: flex-start;
-  padding: var(--space-2) var(--space-4);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   border: none;
   background: var(--teal);

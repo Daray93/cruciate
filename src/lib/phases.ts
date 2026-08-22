@@ -83,7 +83,7 @@ export const PHASES: Record<PhaseId, PhaseDef> = {
     order: 3,
     shortLabel: 'Phase 4',
     title: 'Advanced strength & power',
-    graduationCriterion: '20 pain-free bodyweight squats, a single-leg squat to ~60° with good form, and balance on an unstable surface with eyes closed.',
+    graduationCriterion: '20 pain-free bodyweight squats, a single-leg squat to ~60° with good form, a normal heel-to-toe walking gait with no limp, and balance on an unstable surface with eyes closed.',
   },
   rehab_return_to_sport: {
     id: 'rehab_return_to_sport',
@@ -128,12 +128,11 @@ export function nextPhase(phase: PhaseId): PhaseId | null {
   return index >= 0 && index < order.length - 1 ? order[index + 1] : null
 }
 
-/** Plain-language description of a phase, for check-in result copy — no "Phase N" numbering. */
+/** Plain-language description of a phase, for check-in result copy. */
 export function programmeLevelPhrase(phase: PhaseId): string {
   if (phase === 'prehab_ready') return "you're ready for surgery"
-  const levelByOrder = ['beginner', 'intermediate', 'advanced']
-  const level = levelByOrder[PHASES[phase].order] ?? 'advanced'
-  return `we'll start you with the ${level} programme`
+  const { shortLabel, title } = PHASES[phase]
+  return `we're starting you at ${shortLabel}: ${title}`
 }
 
 export function weeksPostOp(surgeryDate: string, today: Date = new Date()): number {
@@ -167,12 +166,21 @@ export interface MilestoneQuestion {
   id: string
   prompt: string
   help: string
+  /** Present when this question is answered by logging a ROM angle rather than yes/no. */
+  rom?: {
+    direction: 'extension' | 'flexion'
+    /** Slider ceiling in degrees. */
+    max: number
+    /** Extension passes at or under this angle; flexion passes at or over it. */
+    passThreshold: number
+  }
 }
 
 const FULL_EXTENSION_Q: MilestoneQuestion = {
   id: 'full-extension',
   prompt: 'Can you fully straighten your knee?',
-  help: 'Lying flat, press the back of your knee down into the surface until your leg is completely straight. No bend left. Compare to your other leg if you\'re not sure what "fully straight" feels like.',
+  help: 'Lie on your back with the leg flat on the bed, foot relaxed and pointing up. Press the back of your knee down into the bed until your leg is completely straight, no bend left. Compare to your other leg if you\'re not sure what "fully straight" feels like.',
+  rom: { direction: 'extension', max: 30, passThreshold: 5 },
 }
 
 const SWELLING_CONTROLLED_Q: MilestoneQuestion = {
@@ -197,12 +205,14 @@ const FLEXION_90_Q: MilestoneQuestion = {
   id: 'flexion-90',
   prompt: 'Can you bend your knee past 90 degrees?',
   help: "90° is a right angle, like your knee position when sitting in a normal chair. Try a seated heel slide. If your heel comes back further than that, you're past 90°.",
+  rom: { direction: 'flexion', max: 150, passThreshold: 90 },
 }
 
 const FLEXION_120_Q: MilestoneQuestion = {
   id: 'flexion-120',
   prompt: 'Can you bend your knee to at least 120 degrees?',
   help: "Bend your knee as far as you can, using a heel slide or seated stretch. 120° is a bit more than a right angle — close to how far you'd bend sitting on a low stool.",
+  rom: { direction: 'flexion', max: 150, passThreshold: 120 },
 }
 
 const WALK_NO_LIMP_Q: MilestoneQuestion = {
@@ -251,6 +261,7 @@ export const PHASE_QUESTIONS: Record<PhaseId, MilestoneQuestion[]> = {
       id: 'flexion-130',
       prompt: 'Can you bend your knee to at least 130 degrees?',
       help: 'Bend your knee as far as comfortable. 130° is a deep bend — most of the way toward sitting back on your heels.',
+      rom: { direction: 'flexion', max: 150, passThreshold: 130 },
     },
     SINGLE_LEG_SQUAT_CONTROL_Q,
     SINGLE_LEG_BALANCE_30_Q,
@@ -265,6 +276,11 @@ export const PHASE_QUESTIONS: Record<PhaseId, MilestoneQuestion[]> = {
       id: 'single-leg-squat-60',
       prompt: 'Can you do a single-leg squat to about 60 degrees with good form, no knee caving inward?',
       help: 'Stand on the injured leg and squat down to about 60 degrees — a deeper bend than the earlier single-leg squat check. Good form means the knee tracks over your toes, not caving in.',
+    },
+    {
+      id: 'normal-gait-heel-to-toe',
+      prompt: 'Do you walk with a normal heel-to-toe gait and no limp?',
+      help: "Watch yourself walk (or have someone else watch). Each step should land on the heel and roll through to push off the toes, both sides even, with no favoring, shortened stride, or limp on the operative leg. This is a higher bar than the early no-limp check — a normal, natural walking pattern.",
     },
     {
       id: 'balance-unstable-eyes-closed',

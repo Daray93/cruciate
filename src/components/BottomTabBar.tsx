@@ -1,7 +1,7 @@
-import { IconBody, IconGear, IconHome, IconUser } from './icons'
+import { IconGear, IconHome, IconLayers, IconTrendingUp } from './icons'
 import './BottomTabBar.css'
 
-export type MainTab = 'home' | 'body' | 'profile' | 'settings'
+export type MainTab = 'home' | 'phases' | 'progress' | 'settings'
 
 interface BottomTabBarProps {
   active: MainTab
@@ -10,8 +10,8 @@ interface BottomTabBarProps {
 
 const TABS: { id: MainTab; label: string; Icon: typeof IconHome }[] = [
   { id: 'home', label: 'Home', Icon: IconHome },
-  { id: 'body', label: 'Body', Icon: IconBody },
-  { id: 'profile', label: 'Profile', Icon: IconUser },
+  { id: 'phases', label: 'Phases', Icon: IconLayers },
+  { id: 'progress', label: 'Progress', Icon: IconTrendingUp },
   { id: 'settings', label: 'Settings', Icon: IconGear },
 ]
 

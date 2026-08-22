@@ -162,6 +162,25 @@ export function IconBody({ className }: IconProps) {
   )
 }
 
+export function IconTrendingUp({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </svg>
+  )
+}
+
+export function IconLayers({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M12 3l9 5-9 5-9-5 9-5Z" />
+      <path d="M3 13l9 5 9-5" />
+      <path d="M3 8l9 5 9-5" />
+    </svg>
+  )
+}
+
 export function IconUser({ className }: IconProps) {
   return (
     <svg {...BASE_PROPS} className={className}>

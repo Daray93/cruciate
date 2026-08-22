@@ -1,25 +1,19 @@
 import { useRomHistory } from '../hooks/useRomHistory'
 import { useSessionHistory } from '../hooks/useSessionHistory'
-import { IconChevronLeft } from './icons'
 import { RomTrendChart } from './RomTrendChart'
 import { SessionHistory } from './SessionHistory'
 
 interface ProgressScreenProps {
   userId: string
-  onBack: () => void
 }
 
-export function ProgressScreen({ userId, onBack }: ProgressScreenProps) {
+export function ProgressScreen({ userId }: ProgressScreenProps) {
   const { points: romPoints } = useRomHistory(userId)
   const { sessions: history } = useSessionHistory(userId)
 
   return (
-    <main className="app-shell">
-      <header className="subpage-header">
-        <button type="button" className="subpage-back" onClick={onBack}>
-          <IconChevronLeft />
-          Home
-        </button>
+    <main className="app-shell app-shell-with-tabs">
+      <header className="app-header">
         <h1>Progress</h1>
       </header>
 

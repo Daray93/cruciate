@@ -107,6 +107,14 @@
   }
 }
 
+html {
+  /* Reserve the scrollbar's width permanently so switching between a short
+     tab (no scrollbar) and a tall one (scrollbar) doesn't change the
+     viewport's usable width and shift the centered app-shell + fixed
+     bottom bar sideways. */
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   margin: 0;
@@ -156,13 +164,4 @@ input {
   top: var(--space-4);
   right: var(--space-4);
   z-index: 10;
-}
-
-.full-screen-message {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  color: var(--ink-muted);
 }
