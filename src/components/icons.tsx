@@ -122,6 +122,14 @@ export function IconLogout({ className }: IconProps) {
   )
 }
 
+export function IconX({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  )
+}
+
 export function IconEyeOff({ className }: IconProps) {
   return (
     <svg {...BASE_PROPS} className={className}>

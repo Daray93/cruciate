@@ -8,16 +8,25 @@ interface RomTrendChartProps {
 const WIDTH = 320
 const HEIGHT = 140
 const PADDING = 20
-const MAX_DEGREES = 140
+
+// Matches RomTracker's realistic ranges. Extension is degrees short of fully
+// straight (0° = ideal), so it's inverted here — lower plots higher on the
+// chart, same "up = better" visual language as flexion.
+const RANGE: Record<'extension' | 'flexion', { max: number; invert: boolean }> = {
+  extension: { max: 30, invert: true },
+  flexion: { max: 150, invert: false },
+}
 
 function scaleX(index: number, count: number) {
   if (count <= 1) return PADDING
   return PADDING + (index / (count - 1)) * (WIDTH - PADDING * 2)
 }
 
-function scaleY(value: number) {
-  const clamped = Math.max(0, Math.min(MAX_DEGREES, value))
-  return HEIGHT - PADDING - (clamped / MAX_DEGREES) * (HEIGHT - PADDING * 2)
+function scaleY(value: number, key: 'extension' | 'flexion') {
+  const { max, invert } = RANGE[key]
+  const clamped = Math.max(0, Math.min(max, value))
+  const normalized = invert ? max - clamped : clamped
+  return HEIGHT - PADDING - (normalized / max) * (HEIGHT - PADDING * 2)
 }
 
 function buildPath(points: RomPoint[], key: 'extension' | 'flexion') {
@@ -25,7 +34,7 @@ function buildPath(points: RomPoint[], key: 'extension' | 'flexion') {
   points.forEach((point, index) => {
     const value = point[key]
     if (value === null) return
-    segments.push(`${segments.length === 0 ? 'M' : 'L'} ${scaleX(index, points.length)} ${scaleY(value)}`)
+    segments.push(`${segments.length === 0 ? 'M' : 'L'} ${scaleX(index, points.length)} ${scaleY(value, key)}`)
   })
   return segments.join(' ')
 }
@@ -45,6 +54,7 @@ export function RomTrendChart({ points }: RomTrendChartProps) {
         <span className="rom-trend-legend-item extension">Extension</span>
         <span className="rom-trend-legend-item flexion">Flexion</span>
       </div>
+      <p className="rom-trend-hint">Higher on the chart is better for both lines.</p>
     </div>
   )
 }

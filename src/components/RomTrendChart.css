@@ -52,3 +52,9 @@
   font-size: 0.85rem;
   color: var(--ink-muted);
 }
+
+.rom-trend-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}

@@ -18,6 +18,19 @@
   color: var(--teal);
 }
 
+.home-greeting-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.home-date {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink-muted);
+}
+
 .home-status {
   display: flex;
   flex-direction: column;
@@ -66,10 +79,42 @@
 }
 
 .checkin-panel {
+  position: relative;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--surface);
+}
+
+.checkin-panel-close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.checkin-panel-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.checkin-panel-close:hover {
+  background: var(--surface-raised);
+  color: var(--ink);
+}
+
+.checkin-panel-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
 }
 
 .home-rehab-cta {

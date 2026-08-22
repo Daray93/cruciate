@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Theme } from '../hooks/useTheme'
-import { formatRelativeToToday } from '../lib/date'
+import { formatLongDate, formatRelativeToToday } from '../lib/date'
 import { supabase } from '../lib/supabase'
 import { isTimeEligibleForNextPhase, nextPhase, PHASES, weeksPostOp } from '../lib/phases'
 import { useMilestoneCheckins } from '../hooks/useMilestoneCheckins'
 import type { UserProfile } from '../types'
+import { IconX } from './icons'
 import { MilestoneCheckIn } from './MilestoneCheckIn'
 import { OverflowMenu } from './OverflowMenu'
 import './HomeScreen.css'
@@ -64,22 +65,26 @@ export function HomeScreen({
       </header>
 
       <section className="home-greeting">
-        <motion.p
-          className="home-greeting-hi"
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(8px)', transform: 'translateY(8px)' }}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' }}
-          transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: EASE_OUT }}
-        >
-          Welcome back,{' '}
-          <motion.span
-            className="home-greeting-name"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.85)' }}
-            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1)' }}
-            transition={{ type: 'spring', duration: 0.5, bounce: 0.25, delay: reduceMotion ? 0 : 0.15 }}
+        <div className="home-greeting-block">
+          <motion.p
+            className="home-greeting-hi"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(8px)', transform: 'translateY(8px)' }}
+            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' }}
+            transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: EASE_OUT }}
           >
-            {profile.name}
-          </motion.span>
-        </motion.p>
+            Welcome back,{' '}
+            <motion.span
+              className="home-greeting-name"
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.85)' }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1)' }}
+              transition={{ type: 'spring', duration: 0.5, bounce: 0.25, delay: reduceMotion ? 0 : 0.15 }}
+            >
+              {profile.name}
+            </motion.span>
+          </motion.p>
+
+          <p className="home-date">{formatLongDate()}</p>
+        </div>
 
         <div className="home-status">
           <p className="home-phase-label">
@@ -92,29 +97,55 @@ export function HomeScreen({
         </div>
       </section>
 
-      {checkinDue && !checkinOpen && (
-        <button type="button" className="checkin-prompt-card" onClick={() => setCheckinOpen(true)}>
-          <span className="checkin-prompt-title">
-            {track === 'rehab' ? "You're time-eligible for your next phase" : 'Ready to check your progress?'}
-          </span>
-          <span className="checkin-prompt-body">Answer a quick check-in to see if you're ready to advance.</span>
-        </button>
-      )}
+      <AnimatePresence mode="wait">
+        {checkinDue && !checkinOpen && (
+          <motion.button
+            key="checkin-prompt"
+            type="button"
+            className="checkin-prompt-card"
+            onClick={() => setCheckinOpen(true)}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1) translateY(0px)' }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+            transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+          >
+            <span className="checkin-prompt-title">
+              {track === 'rehab' ? "You're time-eligible for your next phase" : 'Ready to check your progress?'}
+            </span>
+            <span className="checkin-prompt-body">Answer a quick check-in to see if you're ready to advance.</span>
+          </motion.button>
+        )}
 
-      {checkinDue && checkinOpen && (
-        <section className="checkin-panel">
-          <MilestoneCheckIn
-            phase={currentPhase}
-            title="Milestone check-in"
-            onSubmit={async (answers) => {
-              const result = await submitCheckin(currentPhase, answers)
-              onProfileChange()
-              return result
-            }}
-            onContinue={() => setCheckinOpen(false)}
-          />
-        </section>
-      )}
+        {checkinDue && checkinOpen && (
+          <motion.section
+            key="checkin-panel"
+            className="checkin-panel"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1) translateY(0px)' }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+            transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+          >
+            <button
+              type="button"
+              className="checkin-panel-close"
+              aria-label="Close check-in"
+              onClick={() => setCheckinOpen(false)}
+            >
+              <IconX />
+            </button>
+            <MilestoneCheckIn
+              phase={currentPhase}
+              title="Milestone check-in"
+              onSubmit={async (answers) => {
+                const result = await submitCheckin(currentPhase, answers)
+                onProfileChange()
+                return result
+              }}
+              onContinue={() => setCheckinOpen(false)}
+            />
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       <button type="button" className="home-rehab-cta" onClick={onOpenRehab}>
         <span className="home-rehab-cta-title">Complete today's rehab</span>

@@ -1,0 +1,19 @@
+.knee-angle-visual {
+  width: 72px;
+  height: 86px;
+  color: var(--ink-muted);
+}
+
+.knee-angle-bone {
+  stroke: currentColor;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.knee-angle-shin {
+  color: var(--teal);
+}
+
+.knee-angle-joint {
+  fill: var(--ink);
+}
