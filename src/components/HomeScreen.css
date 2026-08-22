@@ -1,13 +1,27 @@
 .home-greeting {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-6);
+  padding: var(--space-4) 0 var(--space-2);
 }
 
 .home-greeting-hi {
   margin: 0;
-  font-size: 1.1rem;
+  font-family: var(--font-body);
+  font-size: clamp(1.8rem, 7vw, 2.4rem);
   font-weight: 700;
+  line-height: 1.15;
+}
+
+.home-greeting-name {
+  display: inline-block;
+  color: var(--teal);
+}
+
+.home-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .home-phase-label {
@@ -56,4 +70,43 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--surface);
+}
+
+.home-rehab-cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.home-rehab-cta-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.home-rehab-cta-body {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.home-progress-link {
+  align-self: center;
+  padding: var(--space-2);
+  border: none;
+  background: none;
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.home-progress-link:hover {
+  color: var(--ink);
 }

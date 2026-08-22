@@ -1,72 +1,141 @@
-.exercise-checklist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.exercise-sections {
   display: flex;
   flex-direction: column;
+  gap: var(--space-6);
 }
 
-.exercise-row {
-  padding: var(--space-5) 0;
-  border-top: 1px solid var(--border);
+.exercise-section-title {
+  margin: 0 0 var(--space-3);
+  font-size: 1rem;
 }
 
-.exercise-row:first-child {
-  border-top: none;
-  padding-top: 0;
+.exercise-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
 }
 
-.exercise-row.locked {
+.exercise-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.exercise-card.locked {
   opacity: 0.55;
 }
 
-.exercise-row-main {
+.exercise-card-top {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
+  justify-content: space-between;
 }
 
-.exercise-checkbox {
+.exercise-card-checkbox {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
   cursor: pointer;
 }
 
-.exercise-checkbox input {
-  width: 18px;
-  height: 18px;
+.exercise-card-checkbox input {
+  width: 20px;
+  height: 20px;
   accent-color: var(--teal);
 }
 
-.exercise-name {
+.exercise-card-name {
+  margin: 0;
   font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.3;
 }
 
-.exercise-target {
-  margin-left: auto;
-  font-size: 0.85rem;
+.exercise-card-target {
+  margin: 0;
+  font-size: 0.8rem;
   color: var(--ink-muted);
 }
 
 .lock-badge {
+  align-self: flex-start;
+  margin-top: var(--space-1);
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--amber-soft);
   color: var(--amber);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
-.exercise-fields {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-  margin-top: var(--space-4);
+.exercise-info {
+  position: relative;
+  display: inline-flex;
 }
 
-.exercise-fields .floating-field input {
-  padding: 18px var(--space-2) 6px;
-  font-size: 0.9rem;
+.exercise-info-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.exercise-info-trigger svg {
+  width: 16px;
+  height: 16px;
+}
+
+.exercise-info-trigger:hover,
+.exercise-info-trigger:focus-visible {
+  color: var(--teal);
+}
+
+.exercise-info-tooltip {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 220px;
+  max-width: 70vw;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--ink);
+  font-weight: 400;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.exercise-info:hover .exercise-info-tooltip,
+.exercise-info:focus-within .exercise-info-tooltip,
+.exercise-info.open .exercise-info-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.exercise-info-warn {
+  color: var(--amber);
 }

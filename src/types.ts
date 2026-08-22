@@ -21,26 +21,21 @@ export interface UserProfile {
   phase_advanced_by: PhaseAdvancedBy | null
 }
 
+export type ExerciseCategory = 'mobility' | 'strength'
+
 export interface ExerciseDef {
   id: string
   name: string
+  category: ExerciseCategory | null
   sets: number
   repsTarget: string
+  instructions?: string
+  purpose?: string
   cue?: string
+  frequencyNote?: string
+  equipment?: string
+  contraindications?: string
   requiresLoadClearance?: boolean
-}
-
-export interface DayProgram {
-  dayKey: string
-  label: string
-  focus: string
-  exercises: ExerciseDef[]
-}
-
-export interface WeekProgram {
-  week: number
-  phase: string
-  days: DayProgram[]
 }
 
 export interface LoggedExercise {

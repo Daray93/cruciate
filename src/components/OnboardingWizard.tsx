@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Variants } from 'motion/react'
 import { todayIso } from '../lib/date'
 import { supabase } from '../lib/supabase'
-import { computeStartingPhase, nextPhase, PHASE_QUESTIONS } from '../lib/phases'
+import { computeStartingPhase, nextPhase, PHASE_QUESTIONS, programmeLevelPhrase } from '../lib/phases'
 import type { PhaseId, Track } from '../lib/phases'
 import type { PhaseAdvancedBy, SurgeryTimeframe } from '../types'
 import { Alert } from './Alert'
@@ -149,12 +149,6 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
       setFinalized(true)
     }
     return { passed }
-  }
-
-  async function handleCheckinOverride(startingPhase: PhaseId) {
-    const finalPhase = nextPhase(startingPhase) ?? startingPhase
-    const ok = await writeProfile(finalPhase, 'override')
-    if (ok) setFinalized(true)
   }
 
   async function handleFinishWithoutCheckin(startingPhase: PhaseId) {
@@ -349,31 +343,29 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
           >
             <h1>Quick check-in</h1>
             <p className="onboarding-hint">
-              Your answers decide which phase your program starts in. Answer honestly. There's no wrong answer.
+              Your answers decide which programme you start with. Answer honestly. There's no wrong answer.
             </p>
 
             {hasCheckinQuestions ? (
               <MilestoneCheckIn
                 phase={startingPhase}
                 onSubmit={(answers) => handleCheckinSubmit(startingPhase, answers)}
-                onOverride={() => handleCheckinOverride(startingPhase)}
+                onContinue={onComplete}
               />
             ) : (
-              <p className="onboarding-hint">
-                You're already well into your program. We'll start you where you are.
-              </p>
-            )}
-
-            {!hasCheckinQuestions && !finalized && (
-              <button type="button" className="onboarding-next" disabled={saving} onClick={() => void handleFinishWithoutCheckin(startingPhase)}>
-                {saving ? 'Saving…' : 'Continue'}
-              </button>
-            )}
-
-            {finalized && (
-              <button type="button" className="onboarding-next" onClick={onComplete}>
-                Continue to Cruciate
-              </button>
+              <>
+                <p className="onboarding-hint">
+                  You're already well into your program. Based on your answers, {programmeLevelPhrase(startingPhase)}.
+                </p>
+                <button
+                  type="button"
+                  className="onboarding-next"
+                  disabled={saving}
+                  onClick={finalized ? onComplete : () => void handleFinishWithoutCheckin(startingPhase)}
+                >
+                  {saving ? 'Saving…' : finalized ? 'Continue to Cruciate' : 'Continue'}
+                </button>
+              </>
             )}
           </motion.section>
         )}

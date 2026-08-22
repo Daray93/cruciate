@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { PHASE_QUESTIONS } from '../lib/phases'
+import { nextPhase, PHASE_QUESTIONS, programmeLevelPhrase } from '../lib/phases'
 import type { PhaseId } from '../lib/phases'
 import { IconCheck, IconInfoCircle } from './icons'
 import './MilestoneCheckIn.css'
@@ -14,18 +14,18 @@ interface MilestoneCheckInProps {
   phase: PhaseId
   title?: string
   onSubmit: (answers: CheckinAnswer[]) => Promise<{ passed: boolean }>
-  onOverride?: () => Promise<void>
+  /** Called after either a pass or a fail, once the user is ready to move on. */
+  onContinue?: () => void
 }
 
 type Result = 'passed' | 'failed' | null
 
-export function MilestoneCheckIn({ phase, title, onSubmit, onOverride }: MilestoneCheckInProps) {
+export function MilestoneCheckIn({ phase, title, onSubmit, onContinue }: MilestoneCheckInProps) {
   const questions = PHASE_QUESTIONS[phase]
   const [answers, setAnswers] = useState<Record<string, boolean | null>>(() =>
     Object.fromEntries(questions.map((q) => [q.id, null])),
   )
   const [submitting, setSubmitting] = useState(false)
-  const [overriding, setOverriding] = useState(false)
   const [result, setResult] = useState<Result>(null)
   const [openHelpId, setOpenHelpId] = useState<string | null>(null)
 
@@ -59,18 +59,19 @@ export function MilestoneCheckIn({ phase, title, onSubmit, onOverride }: Milesto
     setResult(passed ? 'passed' : 'failed')
   }
 
-  async function handleOverride() {
-    if (!onOverride) return
-    setOverriding(true)
-    await onOverride()
-    setOverriding(false)
-  }
-
   if (result === 'passed') {
+    const resultingPhase = nextPhase(phase) ?? phase
     return (
       <div className="milestone-result milestone-result-pass">
         <IconCheck className="milestone-result-icon" />
-        <p>Nice work. You've moved to the next phase.</p>
+        <div>
+          <p>Nice work. Based on your answers, {programmeLevelPhrase(resultingPhase)}.</p>
+          {onContinue && (
+            <button type="button" className="milestone-continue" onClick={onContinue}>
+              Continue
+            </button>
+          )}
+        </div>
       </div>
     )
   }
@@ -78,14 +79,14 @@ export function MilestoneCheckIn({ phase, title, onSubmit, onOverride }: Milesto
   if (result === 'failed') {
     return (
       <div className="milestone-result milestone-result-fail">
-        <p>Still working on it. That's normal, and you'll get there.</p>
+        <p>Still working on it. That's normal, and you'll get there. For now, {programmeLevelPhrase(phase)}.</p>
         <div className="milestone-result-actions">
           <button type="button" className="milestone-edit-answers" onClick={() => setResult(null)}>
             Go back and change an answer
           </button>
-          {onOverride && (
-            <button type="button" className="milestone-override" onClick={() => void handleOverride()} disabled={overriding}>
-              {overriding ? 'Advancing…' : "I'll take responsibility, advance anyway"}
+          {onContinue && (
+            <button type="button" className="milestone-continue" onClick={onContinue}>
+              Continue
             </button>
           )}
         </div>

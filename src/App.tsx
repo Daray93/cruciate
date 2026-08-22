@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { AppShell } from './components/AppShell'
 import { AuthGate } from './components/AuthGate'
 import { DesignSystemPage } from './components/DesignSystemPage'
-import { HomeScreen } from './components/HomeScreen'
 import { LegalPage } from './components/LegalPage'
 import { ThemeToggle } from './components/ThemeToggle'
 import { useTheme } from './hooks/useTheme'
@@ -32,7 +32,7 @@ function App() {
       ) : (
         <AuthGate onHomeChange={setIsHome}>
           {(userId, profile, refetchProfile) => (
-            <HomeScreen
+            <AppShell
               userId={userId}
               profile={profile}
               onProfileChange={refetchProfile}

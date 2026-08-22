@@ -1,25 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import type { Theme } from '../hooks/useTheme'
 import { formatRelativeToToday } from '../lib/date'
 import { supabase } from '../lib/supabase'
-import { toIntOrNull, toNumberOrNull } from '../lib/numeric'
 import { isTimeEligibleForNextPhase, nextPhase, PHASES, weeksPostOp } from '../lib/phases'
-import { useExerciseLogs } from '../hooks/useExerciseLogs'
-import { useExercises } from '../hooks/useExercises'
 import { useMilestoneCheckins } from '../hooks/useMilestoneCheckins'
-import { useRomHistory } from '../hooks/useRomHistory'
-import { useRomReading } from '../hooks/useRomReading'
-import { useSession } from '../hooks/useSession'
-import { useSessionHistory } from '../hooks/useSessionHistory'
-import type { LoggedExercise, RomEntry, UserProfile } from '../types'
-import { ExerciseChecklist } from './ExerciseChecklist'
+import type { UserProfile } from '../types'
 import { MilestoneCheckIn } from './MilestoneCheckIn'
 import { OverflowMenu } from './OverflowMenu'
-import { RedFlagCheckIn } from './RedFlagCheckIn'
-import { RomTracker } from './RomTracker'
-import { RomTrendChart } from './RomTrendChart'
-import { SessionHistory } from './SessionHistory'
 import './HomeScreen.css'
+
+const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1]
 
 interface HomeScreenProps {
   userId: string
@@ -27,91 +18,26 @@ interface HomeScreenProps {
   onProfileChange: () => void
   theme: Theme
   onToggleTheme: () => void
+  onOpenRehab: () => void
+  onOpenProgress: () => void
 }
 
-export function HomeScreen({ userId, profile, onProfileChange, theme, onToggleTheme }: HomeScreenProps) {
+export function HomeScreen({
+  userId,
+  profile,
+  onProfileChange,
+  theme,
+  onToggleTheme,
+  onOpenRehab,
+  onOpenProgress,
+}: HomeScreenProps) {
   const { current_phase: currentPhase, track } = profile
   const phaseDef = PHASES[currentPhase]
-  const [loadCleared, setLoadCleared] = useState(false)
   const [checkinOpen, setCheckinOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
 
   const cycleWeek = track === 'rehab' && profile.surgery_date ? weeksPostOp(profile.surgery_date) : 0
-
-  const { session, ensureSession, setRedFlag } = useSession(userId, cycleWeek, currentPhase)
-  const sessionId = session?.id ?? null
-  const redFlagActive = session?.red_flag ?? false
-
-  const { exercises } = useExercises(track, currentPhase)
-  const { log: currentLog, setLog: setCurrentLog } = useExerciseLogs(sessionId, exercises)
-  const { reading: romReading, setReading: setRomReading } = useRomReading(sessionId)
-  const { sessions: history, refetch: refetchHistory } = useSessionHistory(userId)
-  const { points: romPoints, refetch: refetchRomHistory } = useRomHistory(userId)
-  const { submitCheckin, overridePhase } = useMilestoneCheckins(userId)
-
-  useEffect(() => {
-    supabase
-      .from('clearance')
-      .select('load_cleared')
-      .eq('user_id', userId)
-      .maybeSingle()
-      .then(({ data }) => setLoadCleared(data?.load_cleared ?? false))
-  }, [userId])
-
-  async function handleToggleLoadCleared(checked: boolean) {
-    setLoadCleared(checked)
-    await supabase.from('clearance').upsert({ user_id: userId, load_cleared: checked })
-  }
-
-  const completedCount = exercises.filter((exercise) => currentLog[exercise.id]?.done).length
-
-  async function handleExerciseChange(exerciseId: string, patch: Partial<LoggedExercise>) {
-    const exerciseDef = exercises.find((e) => e.id === exerciseId)
-    if (!exerciseDef) return
-
-    const previous = currentLog[exerciseId] ?? { done: false, weight: '', reps: '', rpe: '' }
-    const entry = { ...previous, ...patch }
-    setCurrentLog((prev) => ({ ...prev, [exerciseId]: entry }))
-
-    const id = await ensureSession()
-    await supabase.from('exercises_logged').upsert(
-      {
-        session_id: id,
-        name: exerciseDef.name,
-        done: entry.done,
-        weight: toNumberOrNull(entry.weight),
-        reps: toIntOrNull(entry.reps),
-        rpe: toNumberOrNull(entry.rpe),
-      },
-      { onConflict: 'session_id,name' },
-    )
-    refetchHistory()
-  }
-
-  async function handleRomChange(patch: Partial<RomEntry>) {
-    const merged = { ...romReading, ...patch }
-    setRomReading(merged)
-
-    const id = await ensureSession()
-    await supabase.from('rom_readings').upsert(
-      {
-        session_id: id,
-        extension: toNumberOrNull(merged.extension),
-        flexion: toNumberOrNull(merged.flexion),
-      },
-      { onConflict: 'session_id' },
-    )
-    refetchRomHistory()
-  }
-
-  async function handleRedFlag() {
-    await setRedFlag(true)
-    refetchHistory()
-  }
-
-  async function handleClearRedFlag() {
-    await setRedFlag(false)
-    refetchHistory()
-  }
+  const { submitCheckin } = useMilestoneCheckins(userId)
 
   const next = nextPhase(currentPhase)
   const checkinDue =
@@ -138,14 +64,32 @@ export function HomeScreen({ userId, profile, onProfileChange, theme, onToggleTh
       </header>
 
       <section className="home-greeting">
-        <p className="home-greeting-hi">Hi, {profile.name}</p>
-        <p className="home-phase-label">
-          {track === 'prehab' ? 'Prehab' : 'Rehab'} · {phaseDef.shortLabel}: {phaseDef.title}
-        </p>
-        {track === 'rehab' && profile.surgery_date && <p className="home-phase-week">Week {cycleWeek} post-op</p>}
-        {surgeryTimelineText && <p className="home-phase-week">{surgeryTimelineText}</p>}
-        {injuryText && <p className="home-phase-week">{injuryText}</p>}
-        <p className="home-phase-criterion">{phaseDef.graduationCriterion}</p>
+        <motion.p
+          className="home-greeting-hi"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(8px)', transform: 'translateY(8px)' }}
+          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' }}
+          transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: EASE_OUT }}
+        >
+          Welcome back,{' '}
+          <motion.span
+            className="home-greeting-name"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.85)' }}
+            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1)' }}
+            transition={{ type: 'spring', duration: 0.5, bounce: 0.25, delay: reduceMotion ? 0 : 0.15 }}
+          >
+            {profile.name}
+          </motion.span>
+        </motion.p>
+
+        <div className="home-status">
+          <p className="home-phase-label">
+            {track === 'prehab' ? 'Prehab' : 'Rehab'} · {phaseDef.shortLabel}: {phaseDef.title}
+          </p>
+          {track === 'rehab' && profile.surgery_date && <p className="home-phase-week">Week {cycleWeek} post-op</p>}
+          {surgeryTimelineText && <p className="home-phase-week">{surgeryTimelineText}</p>}
+          {injuryText && <p className="home-phase-week">{injuryText}</p>}
+          <p className="home-phase-criterion">{phaseDef.graduationCriterion}</p>
+        </div>
       </section>
 
       {checkinDue && !checkinOpen && (
@@ -167,57 +111,19 @@ export function HomeScreen({ userId, profile, onProfileChange, theme, onToggleTh
               onProfileChange()
               return result
             }}
-            onOverride={async () => {
-              await overridePhase(currentPhase)
-              onProfileChange()
-            }}
+            onContinue={() => setCheckinOpen(false)}
           />
         </section>
       )}
 
-      <RedFlagCheckIn
-        active={redFlagActive}
-        onFlag={() => void handleRedFlag()}
-        onClear={() => void handleClearRedFlag()}
-      />
+      <button type="button" className="home-rehab-cta" onClick={onOpenRehab}>
+        <span className="home-rehab-cta-title">Complete today's rehab</span>
+        <span className="home-rehab-cta-body">Exercises, range of motion, and today's check-in</span>
+      </button>
 
-      {!redFlagActive && (
-        <>
-          <label className="clearance-toggle">
-            <input
-              type="checkbox"
-              checked={loadCleared}
-              onChange={(e) => void handleToggleLoadCleared(e.target.checked)}
-            />
-            Load cleared
-          </label>
-
-          <section className="session-summary">
-            <span>
-              {completedCount} / {exercises.length} complete
-            </span>
-          </section>
-
-          <ExerciseChecklist
-            exercises={exercises}
-            log={currentLog}
-            loadCleared={loadCleared}
-            onChange={(id, patch) => void handleExerciseChange(id, patch)}
-          />
-
-          <RomTracker reading={romReading} onChange={(patch) => void handleRomChange(patch)} />
-        </>
-      )}
-
-      <section className="rom-trend-section">
-        <h2>ROM trend</h2>
-        <RomTrendChart points={romPoints} />
-      </section>
-
-      <section className="session-history-section">
-        <h2>Session history</h2>
-        <SessionHistory sessions={history} />
-      </section>
+      <button type="button" className="home-progress-link" onClick={onOpenProgress}>
+        View progress
+      </button>
     </main>
   )
 }

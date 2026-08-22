@@ -39,15 +39,5 @@ export function useMilestoneCheckins(userId: string) {
     return { passed, advancedTo }
   }
 
-  async function overridePhase(phaseTarget: PhaseId): Promise<PhaseId | null> {
-    const next = nextPhase(phaseTarget)
-    if (!next) return null
-    await supabase
-      .from('user_profile')
-      .update({ current_phase: next, phase_advanced_at: new Date().toISOString(), phase_advanced_by: 'override' })
-      .eq('user_id', userId)
-    return next
-  }
-
-  return { submitCheckin, overridePhase }
+  return { submitCheckin }
 }

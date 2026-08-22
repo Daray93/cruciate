@@ -200,9 +200,15 @@ export interface Database {
           name: string
           track: string
           phase: string
+          category: string | null
           instructions: string | null
+          purpose: string | null
+          cue: string | null
           sets: number | null
           reps_target: string | null
+          frequency_note: string | null
+          equipment: string | null
+          contraindications: string | null
           requires_load_clearance: boolean
           sort_order: number
         }
@@ -211,9 +217,15 @@ export interface Database {
           name: string
           track: string
           phase: string
+          category?: string | null
           instructions?: string | null
+          purpose?: string | null
+          cue?: string | null
           sets?: number | null
           reps_target?: string | null
+          frequency_note?: string | null
+          equipment?: string | null
+          contraindications?: string | null
           requires_load_clearance?: boolean
           sort_order?: number
         }
@@ -222,9 +234,15 @@ export interface Database {
           name?: string
           track?: string
           phase?: string
+          category?: string | null
           instructions?: string | null
+          purpose?: string | null
+          cue?: string | null
           sets?: number | null
           reps_target?: string | null
+          frequency_note?: string | null
+          equipment?: string | null
+          contraindications?: string | null
           requires_load_clearance?: boolean
           sort_order?: number
         }

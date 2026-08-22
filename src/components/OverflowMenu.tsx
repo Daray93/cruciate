@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import type { Theme } from '../hooks/useTheme'
-import { IconDotsHorizontal, IconMoon, IconSun } from './icons'
+import { IconDotsHorizontal, IconLogout, IconMoon, IconSun } from './icons'
 import './OverflowMenu.css'
 
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1]
@@ -91,7 +91,7 @@ export function OverflowMenu({ theme, onToggleTheme, onSignOut }: OverflowMenuPr
             }}
           >
             {isDark ? <IconSun /> : <IconMoon />}
-            {isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            {isDark ? 'Light mode' : 'Dark mode'}
           </button>
           <button
             type="button"
@@ -105,6 +105,7 @@ export function OverflowMenu({ theme, onToggleTheme, onSignOut }: OverflowMenuPr
               onSignOut()
             }}
           >
+            <IconLogout />
             Sign out
           </button>
         </motion.div>

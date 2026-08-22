@@ -145,10 +145,17 @@
 
 .milestone-result-pass {
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   border-color: var(--teal);
   background: var(--teal-soft);
   color: var(--teal);
+}
+
+.milestone-result-pass > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
 }
 
 .milestone-result-icon {
@@ -179,17 +186,18 @@
   cursor: pointer;
 }
 
-.milestone-override {
-  padding: var(--space-2) var(--space-3);
+.milestone-continue {
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--ink);
-  font-weight: 600;
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
   cursor: pointer;
 }
 
-.milestone-override:disabled {
+.milestone-continue:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

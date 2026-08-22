@@ -8,6 +8,8 @@ export type PhaseId =
   | 'rehab_protection'
   | 'rehab_activation'
   | 'rehab_strength'
+  | 'rehab_advanced'
+  | 'rehab_return_to_sport'
 
 export interface PhaseDef {
   id: PhaseId
@@ -25,7 +27,7 @@ export const PHASES: Record<PhaseId, PhaseDef> = {
     order: 0,
     shortLabel: 'Phase 1',
     title: 'ROM restoration',
-    graduationCriterion: 'Full extension, controlled swelling, and a straight leg raise with no lag.',
+    graduationCriterion: 'Full knee extension, flexion past 120°, and minimal swelling.',
   },
   prehab_activation: {
     id: 'prehab_activation',
@@ -33,7 +35,7 @@ export const PHASES: Record<PhaseId, PhaseDef> = {
     order: 1,
     shortLabel: 'Phase 2',
     title: 'Quad activation',
-    graduationCriterion: 'Solid quad sets, pain-free straight leg raises, and low resting pain.',
+    graduationCriterion: 'A straight leg raise with no lag, a 10-second quad set, and swelling that stays controlled during exercise.',
   },
   prehab_strength: {
     id: 'prehab_strength',
@@ -41,7 +43,7 @@ export const PHASES: Record<PhaseId, PhaseDef> = {
     order: 2,
     shortLabel: 'Phase 3',
     title: 'Quad strength',
-    graduationCriterion: 'Controlled mini squats and a walk with no limp.',
+    graduationCriterion: 'A controlled single-leg quarter squat, 30-second single-leg balance, and pain-free exercises.',
   },
   prehab_ready: {
     id: 'prehab_ready',
@@ -56,31 +58,54 @@ export const PHASES: Record<PhaseId, PhaseDef> = {
     track: 'rehab',
     order: 0,
     shortLabel: 'Phase 1',
-    title: 'Protection / ROM',
-    graduationCriterion: 'Full extension, controlled swelling, and a straight leg raise with no lag.',
+    title: 'Protection & early ROM',
+    graduationCriterion: 'Full passive extension, flexion past 90°, and controlled swelling.',
   },
   rehab_activation: {
     id: 'rehab_activation',
     track: 'rehab',
     order: 1,
     shortLabel: 'Phase 2',
-    title: 'Quad activation',
-    graduationCriterion: 'Knee flexion past 90°, full quad activation, and swelling that settles after activity.',
+    title: 'Early activation',
+    graduationCriterion: 'A straight leg raise with no lag, flexion past 120°, and walking without a significant limp.',
   },
   rehab_strength: {
     id: 'rehab_strength',
     track: 'rehab',
     order: 2,
     shortLabel: 'Phase 3',
-    title: 'Quad strength',
-    graduationCriterion: 'Ongoing strength work. Keep building toward return-to-activity clearance.',
+    title: 'Strength building',
+    graduationCriterion: 'Flexion past 130°, a controlled single-leg quarter squat, and 30-second single-leg balance.',
+  },
+  rehab_advanced: {
+    id: 'rehab_advanced',
+    track: 'rehab',
+    order: 3,
+    shortLabel: 'Phase 4',
+    title: 'Advanced strength & power',
+    graduationCriterion: '20 pain-free bodyweight squats, a single-leg squat to ~60° with good form, and balance on an unstable surface with eyes closed.',
+  },
+  rehab_return_to_sport: {
+    id: 'rehab_return_to_sport',
+    track: 'rehab',
+    order: 4,
+    shortLabel: 'Phase 5',
+    title: 'Return to sport prep',
+    graduationCriterion:
+      'Sport-specific conditioning and confidence building — this app tracks readiness signs, it does not clear you to play. That call is your surgeon or PT\'s.',
   },
 }
 
 export const PREHAB_ORDER: PhaseId[] = ['prehab_rom', 'prehab_activation', 'prehab_strength', 'prehab_ready']
-export const REHAB_ORDER: PhaseId[] = ['rehab_protection', 'rehab_activation', 'rehab_strength']
+export const REHAB_ORDER: PhaseId[] = [
+  'rehab_protection',
+  'rehab_activation',
+  'rehab_strength',
+  'rehab_advanced',
+  'rehab_return_to_sport',
+]
 
-// Week (post-op) each rehab phase becomes time-eligible, per the ~0-2 / 2-6 / 6+ week bands.
+// Week (post-op) each rehab phase becomes time-eligible, per the 0-2 / 2-6 / 6-12 / 12-20 / 20+ week bands.
 const REHAB_PHASE_START_WEEK: Record<PhaseId, number> = {
   prehab_rom: 0,
   prehab_activation: 0,
@@ -89,6 +114,8 @@ const REHAB_PHASE_START_WEEK: Record<PhaseId, number> = {
   rehab_protection: 0,
   rehab_activation: 2,
   rehab_strength: 6,
+  rehab_advanced: 12,
+  rehab_return_to_sport: 20,
 }
 
 export function phaseOrder(track: Track): PhaseId[] {
@@ -101,6 +128,14 @@ export function nextPhase(phase: PhaseId): PhaseId | null {
   return index >= 0 && index < order.length - 1 ? order[index + 1] : null
 }
 
+/** Plain-language description of a phase, for check-in result copy — no "Phase N" numbering. */
+export function programmeLevelPhrase(phase: PhaseId): string {
+  if (phase === 'prehab_ready') return "you're ready for surgery"
+  const levelByOrder = ['beginner', 'intermediate', 'advanced']
+  const level = levelByOrder[PHASES[phase].order] ?? 'advanced'
+  return `we'll start you with the ${level} programme`
+}
+
 export function weeksPostOp(surgeryDate: string, today: Date = new Date()): number {
   const surgery = new Date(surgeryDate)
   const days = Math.floor((today.getTime() - surgery.getTime()) / (1000 * 60 * 60 * 24))
@@ -110,7 +145,9 @@ export function weeksPostOp(surgeryDate: string, today: Date = new Date()): numb
 function rehabPhaseFromWeeks(weeks: number): PhaseId {
   if (weeks < 2) return 'rehab_protection'
   if (weeks < 6) return 'rehab_activation'
-  return 'rehab_strength'
+  if (weeks < 12) return 'rehab_strength'
+  if (weeks < 20) return 'rehab_advanced'
+  return 'rehab_return_to_sport'
 }
 
 export function computeStartingPhase(track: Track, surgeryDate: string | null): PhaseId {
@@ -150,57 +187,90 @@ const SLR_NO_LAG_Q: MilestoneQuestion = {
   help: 'Lift your straight leg a few inches off the bed while keeping the knee fully locked straight the whole time. "Lag" is when the knee bends slightly instead of staying locked as you lift. If you see or feel that buckle, that\'s a lag.',
 }
 
+const QUAD_SET_HOLD_Q: MilestoneQuestion = {
+  id: 'quad-set-hold',
+  prompt: 'Can you hold a quad set (tightening your thigh) for 10 seconds with a visible contraction?',
+  help: 'A quad set is tightening your thigh muscle by pressing the back of your knee down, without bending the knee. "Visible" means you or someone else can actually see the muscle near the inside of your knee pull tight, not just feel it. Hold for a full 10 seconds.',
+}
+
+const FLEXION_90_Q: MilestoneQuestion = {
+  id: 'flexion-90',
+  prompt: 'Can you bend your knee past 90 degrees?',
+  help: "90° is a right angle, like your knee position when sitting in a normal chair. Try a seated heel slide. If your heel comes back further than that, you're past 90°.",
+}
+
+const FLEXION_120_Q: MilestoneQuestion = {
+  id: 'flexion-120',
+  prompt: 'Can you bend your knee to at least 120 degrees?',
+  help: "Bend your knee as far as you can, using a heel slide or seated stretch. 120° is a bit more than a right angle — close to how far you'd bend sitting on a low stool.",
+}
+
+const WALK_NO_LIMP_Q: MilestoneQuestion = {
+  id: 'walk-no-limp',
+  prompt: 'Can you walk without a limp?',
+  help: 'A limp shows up as uneven steps. You spend less time on the operative leg, or keep the knee stiff and swing it instead of bending it normally as you step.',
+}
+
+const SINGLE_LEG_SQUAT_CONTROL_Q: MilestoneQuestion = {
+  id: 'single-leg-squat-control',
+  prompt: 'Can you do a single-leg quarter squat with good control, no knee caving inward?',
+  help: 'Stand on the injured leg only and bend the knee into a small squat. "Good control" means the knee doesn\'t cave inward toward your other leg as you bend, and you\'re not wobbling to stay balanced.',
+}
+
+const SINGLE_LEG_BALANCE_30_Q: MilestoneQuestion = {
+  id: 'single-leg-balance-30',
+  prompt: 'Can you hold single-leg balance for 30 seconds without wobbling significantly?',
+  help: 'Stand on the injured leg only, arms out for balance if needed. Time how long you can hold it steady, aiming for 30 seconds without significant wobbling.',
+}
+
+const PAIN_FREE_EXERCISES_Q: MilestoneQuestion = {
+  id: 'pain-free-exercises',
+  prompt: 'Are all your exercises pain-free right now?',
+  help: 'Think back over your recent sessions. Are quad sets, straight leg raises, and squats all comfortable, without pain during or after?',
+}
+
 // Questions gate graduating OUT of the given phase into the next one. Terminal
-// phases (prehab_ready, rehab_strength) have no next phase, so no questions.
+// phases (prehab_ready, rehab_return_to_sport) have no next phase, so no questions.
 export const PHASE_QUESTIONS: Record<PhaseId, MilestoneQuestion[]> = {
-  prehab_rom: [FULL_EXTENSION_Q, SWELLING_CONTROLLED_Q, SLR_NO_LAG_Q],
+  prehab_rom: [FULL_EXTENSION_Q, FLEXION_120_Q, SWELLING_CONTROLLED_Q],
   prehab_activation: [
+    SLR_NO_LAG_Q,
+    QUAD_SET_HOLD_Q,
     {
-      id: 'quad-set-hold',
-      prompt: 'Can you hold a quad set (tightening your thigh) for 10 seconds without pain?',
-      help: 'A quad set is tightening your thigh muscle by pressing the back of your knee down, without bending the knee. You should see the kneecap pull slightly upward. Hold that contraction for a full 10 seconds pain-free.',
-    },
-    {
-      id: 'slr-three-sets',
-      prompt: 'Can you complete 3 sets of straight leg raises with no lag?',
-      help: 'Same movement as before (leg lifted straight, knee locked). This time you\'re checking whether the knee still stays locked across a full set of repeats, not just on the first rep before fatigue sets in.',
-    },
-    {
-      id: 'low-rest-pain',
-      prompt: 'Is your knee pain at rest 2/10 or lower?',
-      help: '0 = no pain at all, 10 = the worst pain imaginable. "At rest" means sitting still, not mid-exercise. A 2 or below is mild, background discomfort rather than pain that distracts you.',
+      id: 'swelling-during-exercise',
+      prompt: 'Does your swelling stay controlled during and after these exercises?',
+      help: 'Check whether your knee swelling stays about the same, or only gets a little worse, during and right after these exercises, rather than flaring up noticeably.',
     },
   ],
-  prehab_strength: [
-    {
-      id: 'mini-squat-control',
-      prompt: 'Can you do a mini squat with good control and no pain?',
-      help: 'A small, partial squat. Bend the knees roughly 30-45°, like starting to sit into a chair. "Good control" means your weight stays even between both legs, without wobbling or shifting away from the operative side.',
-    },
-    {
-      id: 'walk-no-limp',
-      prompt: 'Can you walk without a limp?',
-      help: "A limp shows up as uneven steps. You spend less time on the operative leg, or keep the knee stiff and swing it instead of bending it normally as you step.",
-    },
-  ],
+  prehab_strength: [SINGLE_LEG_SQUAT_CONTROL_Q, SINGLE_LEG_BALANCE_30_Q, PAIN_FREE_EXERCISES_Q],
   prehab_ready: [],
-  rehab_protection: [FULL_EXTENSION_Q, SWELLING_CONTROLLED_Q, SLR_NO_LAG_Q],
-  rehab_activation: [
+  rehab_protection: [FULL_EXTENSION_Q, FLEXION_90_Q, SWELLING_CONTROLLED_Q],
+  rehab_activation: [SLR_NO_LAG_Q, FLEXION_120_Q, WALK_NO_LIMP_Q],
+  rehab_strength: [
     {
-      id: 'flexion-90',
-      prompt: 'Can you bend your knee past 90 degrees?',
-      help: "90° is a right angle, like your knee position when sitting in a normal chair. Try a seated heel slide. If your heel comes back further than that, you're past 90°.",
+      id: 'flexion-130',
+      prompt: 'Can you bend your knee to at least 130 degrees?',
+      help: 'Bend your knee as far as comfortable. 130° is a deep bend — most of the way toward sitting back on your heels.',
+    },
+    SINGLE_LEG_SQUAT_CONTROL_Q,
+    SINGLE_LEG_BALANCE_30_Q,
+  ],
+  rehab_advanced: [
+    {
+      id: 'squats-20-pain-free',
+      prompt: 'Can you do 20 consecutive bodyweight squats without pain or swelling?',
+      help: 'Do 20 regular bodyweight squats in a row, bending to about a right angle each time. Check whether you can complete all 20 without pain, and without swelling afterward.',
     },
     {
-      id: 'quad-activation',
-      prompt: 'Can you do a quad set with full activation and no lag on a straight leg raise?',
-      help: "Two checks in one: a strong, full quad tightening (see the kneecap pull up clearly), then lifting the straight leg with the knee staying fully locked the entire time. No bending as it rises.",
+      id: 'single-leg-squat-60',
+      prompt: 'Can you do a single-leg squat to about 60 degrees with good form, no knee caving inward?',
+      help: 'Stand on the injured leg and squat down to about 60 degrees — a deeper bend than the earlier single-leg squat check. Good form means the knee tracks over your toes, not caving in.',
     },
     {
-      id: 'swelling-settles',
-      prompt: 'Does swelling settle down after activity?',
-      help: "After exercising or being active, check whether the knee's puffiness goes back down within a reasonable time, by the next morning, say. It shouldn't stay swollen or get worse the longer you're active.",
+      id: 'balance-unstable-eyes-closed',
+      prompt: 'Can you hold single-leg balance for 30 seconds on an unstable surface with your eyes closed?',
+      help: 'Stand on the injured leg on a soft or uneven surface (a pillow or folded towel works), close your eyes, and hold as steady as you can for 30 seconds.',
     },
   ],
-  rehab_strength: [],
+  rehab_return_to_sport: [],
 }
