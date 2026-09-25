@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { RETRY_DELAYS_MS } from '../lib/retry'
 import { WAIVER_VERSION } from '../lib/waiver'
 
-type WaiverStatus = 'loading' | 'needed' | 'accepted'
+type WaiverStatus = 'loading' | 'needed' | 'accepted' | 'error'
 
 export function useWaiverStatus(userId: string | undefined) {
   const [status, setStatus] = useState<WaiverStatus>('loading')
@@ -11,23 +12,43 @@ export function useWaiverStatus(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return
     let cancelled = false
+    let retryTimer: ReturnType<typeof setTimeout> | undefined
 
-    supabase
-      .from('waiver_acceptances')
-      .select('version')
-      .eq('user_id', userId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (cancelled) return
-        setStatus(data?.version === WAIVER_VERSION ? 'accepted' : 'needed')
-      })
+    // Same rule as useUserProfile: a failed request is not "waiver needed".
+    function attempt(tryIndex: number) {
+      supabase
+        .from('waiver_acceptances')
+        .select('version')
+        .eq('user_id', userId!)
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (cancelled) return
+          if (error) {
+            if (tryIndex < RETRY_DELAYS_MS.length) {
+              retryTimer = setTimeout(() => attempt(tryIndex + 1), RETRY_DELAYS_MS[tryIndex])
+            } else {
+              setStatus('error')
+            }
+            return
+          }
+          setStatus(data?.version === WAIVER_VERSION ? 'accepted' : 'needed')
+        })
+    }
+    attempt(0)
 
     return () => {
       cancelled = true
+      clearTimeout(retryTimer)
     }
   }, [userId, refetchIndex])
 
-  const refetch = useCallback(() => setRefetchIndex((i) => i + 1), [])
+  // Only drop back to loading when recovering from an error. A normal
+  // refetch (e.g. after saving the profile) keeps showing the current
+  // screen instead of flashing the whole app to a skeleton.
+  const refetch = useCallback(() => {
+    setStatus((s) => (s === 'error' ? 'loading' : s))
+    setRefetchIndex((i) => i + 1)
+  }, [])
 
   return { status, refetch }
 }

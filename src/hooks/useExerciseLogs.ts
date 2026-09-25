@@ -8,6 +8,8 @@ interface ExerciseLogRow {
   weight: number | null
   reps: number | null
   rpe: number | null
+  sets_completed: number
+  holds_completed: number
 }
 
 export function useExerciseLogs(sessionId: string | null, exercises: ExerciseDef[]) {
@@ -16,7 +18,7 @@ export function useExerciseLogs(sessionId: string | null, exercises: ExerciseDef
   useEffect(() => {
     let cancelled = false
     const fetcher = sessionId
-      ? supabase.from('exercises_logged').select('name, done, weight, reps, rpe').eq('session_id', sessionId)
+      ? supabase.from('exercises_logged').select('name, done, weight, reps, rpe, sets_completed, holds_completed').eq('session_id', sessionId)
       : Promise.resolve({ data: [] as ExerciseLogRow[] })
 
     fetcher.then((result) => {
@@ -28,11 +30,13 @@ export function useExerciseLogs(sessionId: string | null, exercises: ExerciseDef
         next[exercise.id] = row
           ? {
               done: row.done,
+              setsCompleted: row.sets_completed,
+              holdsCompleted: row.holds_completed,
               weight: row.weight !== null ? String(row.weight) : '',
               reps: row.reps !== null ? String(row.reps) : '',
               rpe: row.rpe !== null ? String(row.rpe) : '',
             }
-          : { done: false, weight: '', reps: '', rpe: '' }
+          : { done: false, setsCompleted: 0, holdsCompleted: 0, weight: '', reps: '', rpe: '' }
       }
       setLog(next)
     })

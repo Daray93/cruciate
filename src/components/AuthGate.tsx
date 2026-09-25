@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useUserProfile } from '../hooks/useUserProfile'
 import { useWaiverStatus } from '../hooks/useWaiverStatus'
 import type { UserProfile } from '../types'
 import { AppSkeleton } from './AppSkeleton'
+import { LoadErrorScreen } from './LoadErrorScreen'
 import { OnboardingWizard } from './OnboardingWizard'
 import { SplashPage } from './SplashPage'
 import { WaiverScreen } from './WaiverScreen'
@@ -26,12 +27,21 @@ export function AuthGate({ children, onHomeChange }: AuthGateProps) {
     onHomeChange?.(isHome)
   }, [isHome, onHomeChange])
 
+  const retryLoad = useCallback(() => {
+    refetchWaiver()
+    refetchProfile()
+  }, [refetchWaiver, refetchProfile])
+
   if (authLoading) {
     return <AppSkeleton />
   }
 
   if (!user) {
     return <SplashPage />
+  }
+
+  if (waiverStatus === 'error' || profileStatus === 'error') {
+    return <LoadErrorScreen onRetry={retryLoad} />
   }
 
   if (waiverStatus === 'loading') {

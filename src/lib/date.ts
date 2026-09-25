@@ -16,12 +16,13 @@ export function daysUntil(iso: string, today: Date = new Date()): number {
   return Math.round((target.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24))
 }
 
-/** "22 August 2026" — fixed day/month-name/year order regardless of browser locale. */
+/** "Sat 22 Aug, 2026" — fixed weekday/day/month/year order regardless of browser locale. */
 export function formatLongDate(date: Date = new Date()): string {
+  const weekday = date.toLocaleDateString('en-GB', { weekday: 'short' })
   const day = date.getDate()
-  const month = date.toLocaleDateString('en-GB', { month: 'long' })
+  const month = date.toLocaleDateString('en-GB', { month: 'short' })
   const year = date.getFullYear()
-  return `${day} ${month} ${year}`
+  return `${weekday} ${day} ${month}, ${year}`
 }
 
 /** "in 3 weeks" / "6 days ago" / "today" — days under two weeks read as days, past that as weeks. */

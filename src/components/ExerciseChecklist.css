@@ -6,24 +6,55 @@
   flex-direction: column;
 }
 
+/* Outer wrapper: the hide action sits behind the row at a fixed 88px on the
+   right, and drag is constrained to exactly that range, so nothing needs
+   clipping here — doing so would also clip the info tooltip, which is
+   meant to float below the row. The divider between rows lives here, not
+   on the draggable foreground, so it doesn't move with the swipe. */
+.exercise-row-swipe {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+
+.exercise-row-swipe:last-child {
+  border-bottom: none;
+}
+
+.exercise-row-hide-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: none;
+  background: var(--red);
+  color: var(--bg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.exercise-row-hide-action svg {
+  width: 18px;
+  height: 18px;
+}
+
 .exercise-row {
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) 0;
+  background: var(--bg);
+  touch-action: pan-y;
 }
 
-.exercise-row:first-child {
-  padding-top: 0;
-}
-
-.exercise-row:last-child {
-  border-bottom: none;
-}
-
-.exercise-row.locked {
+.exercise-row-swipe.locked .exercise-row {
   opacity: 0.55;
 }
 
@@ -52,6 +83,9 @@
 
 .exercise-row-timer {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
   border: 1px solid var(--teal);
@@ -65,15 +99,125 @@
 .exercise-row-timer.running {
   background: var(--teal);
   color: var(--bg);
+}
+
+.exercise-row-timer:disabled {
   cursor: default;
+}
+
+.exercise-row-timer-cancel {
+  width: 11px;
+  height: 11px;
 }
 
 .exercise-row-checkbox {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  accent-color: var(--teal);
+  position: relative;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--bg);
   cursor: pointer;
+}
+
+.exercise-row-checkbox.checked {
+  border-color: var(--teal);
+  background: var(--teal);
+}
+
+.exercise-row-checkbox.checked::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.exercise-row-checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.exercise-row-counter {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--teal);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.exercise-row-counter.partial {
+  border-color: var(--teal);
+}
+
+.exercise-row-counter.checked {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: var(--bg);
+}
+
+.exercise-row-counter:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.exercise-set-pips {
+  flex-shrink: 0;
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.exercise-set-pip {
+  position: relative;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.exercise-set-pip.filled {
+  border-color: var(--teal);
+  background: var(--teal);
+}
+
+.exercise-set-pip.filled::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.exercise-set-pip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
 }
 
 .exercise-info {
@@ -85,8 +229,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: none;
   border-radius: 50%;

@@ -106,23 +106,34 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
 
   async function writeProfile(currentPhase: PhaseId, advancedBy: PhaseAdvancedBy | null): Promise<boolean> {
     setError(null)
-    // Upsert rather than insert: if the profile-existence check that gates
-    // this wizard raced a still-settling auth session and returned stale
-    // "missing" for an account that already onboarded, this must not fail
-    // with a duplicate-key error — it should just leave the existing row alone.
-    const { error: insertError } = await supabase.from('user_profile').upsert({
-      user_id: userId,
-      name: name.trim(),
-      age: Number(age),
-      track: track as Track,
-      surgery_timeframe: track === 'prehab' ? surgeryTimeframe : null,
-      surgery_date: surgeryDate || null,
-      injury_date: injuryDate || null,
-      current_phase: currentPhase,
-      phase_advanced_by: advancedBy,
-    })
+    // Insert-or-skip, never overwrite. If this wizard was shown to someone
+    // who already has a profile (the gate's check failed or raced), a plain
+    // upsert would replace their real profile and reset their phase. With
+    // ignoreDuplicates the existing row wins and no row comes back.
+    const { data, error: insertError } = await supabase
+      .from('user_profile')
+      .upsert(
+        {
+          user_id: userId,
+          name: name.trim(),
+          age: Number(age),
+          track: track as Track,
+          surgery_timeframe: track === 'prehab' ? surgeryTimeframe : null,
+          surgery_date: surgeryDate || null,
+          injury_date: injuryDate || null,
+          current_phase: currentPhase,
+          phase_advanced_by: advancedBy,
+        },
+        { onConflict: 'user_id', ignoreDuplicates: true },
+      )
+      .select('user_id')
     if (insertError) {
       setError(insertError.message)
+      return false
+    }
+    if (!data || data.length === 0) {
+      // Profile already existed: skip the rest of the wizard and load it.
+      onComplete()
       return false
     }
     return true
@@ -349,6 +360,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
             {hasCheckinQuestions ? (
               <MilestoneCheckIn
                 phase={startingPhase}
+                mode="onboarding"
                 onSubmit={(answers) => handleCheckinSubmit(startingPhase, answers)}
                 onContinue={onComplete}
               />

@@ -84,7 +84,7 @@ export function ProfilePage({ userId, profile, onProfileChange, onBack }: Profil
       </section>
 
       <section className="settings-section">
-        <h2 className="settings-section-title">Clearance</h2>
+        <h2 className="section-title">Clearance</h2>
         <div className="settings-row">
           <div className="settings-row-text">
             <span className="settings-row-label">Cleared for loaded exercises</span>

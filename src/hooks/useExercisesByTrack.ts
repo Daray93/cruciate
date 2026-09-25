@@ -12,7 +12,7 @@ export function useExercisesByTrack(track: Track) {
     supabase
       .from('exercises')
       .select(
-        'id, name, category, instructions, purpose, cue, sets, reps_target, frequency_note, equipment, contraindications, requires_load_clearance, hold_seconds, phase',
+        'id, name, category, instructions, purpose, cue, sets, reps_target, frequency_note, equipment, contraindications, requires_load_clearance, hold_seconds, hold_reps, phase',
       )
       .eq('track', track)
       .order('sort_order', { ascending: true })
@@ -39,6 +39,7 @@ export function useExercisesByTrack(track: Track) {
             contraindications: row.contraindications ?? undefined,
             requiresLoadClearance: row.requires_load_clearance,
             holdSeconds: row.hold_seconds ?? undefined,
+            holdReps: row.hold_reps ?? undefined,
           }
           ;(grouped[phase] ??= []).push(def)
         }

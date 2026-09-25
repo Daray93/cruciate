@@ -1,0 +1,34 @@
+.load-error-screen {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-5);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.load-error-screen h1 {
+  margin: 0;
+}
+
+.load-error-retry {
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.load-error-retry:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}

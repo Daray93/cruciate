@@ -105,6 +105,11 @@ export const REHAB_ORDER: PhaseId[] = [
   'rehab_return_to_sport',
 ]
 
+// Prehab has no fixed timeline (injury-to-surgery gaps vary too much to lock to
+// calendar time), so it's gated on practice instead: roughly a week's worth of
+// completed rounds in the current phase, however long that actually takes.
+export const PREHAB_MIN_ROUNDS_FOR_CHECKIN = 7
+
 // Week (post-op) each rehab phase becomes time-eligible, per the 0-2 / 2-6 / 6-12 / 12-20 / 20+ week bands.
 const REHAB_PHASE_START_WEEK: Record<PhaseId, number> = {
   prehab_rom: 0,
@@ -122,17 +127,43 @@ export function phaseOrder(track: Track): PhaseId[] {
   return track === 'prehab' ? PREHAB_ORDER : REHAB_ORDER
 }
 
+/** True if `phase` is time-eligible to switch/graduate into right now. Prehab has no week gating, so it's always true there. */
+export function isTimeEligibleForPhase(track: Track, phase: PhaseId, surgeryDate: string | null): boolean {
+  if (track !== 'rehab' || !surgeryDate) return true
+  return weeksPostOp(surgeryDate) >= REHAB_PHASE_START_WEEK[phase]
+}
+
+/** "Typically weeks 6-12" style label for a rehab phase card; null for prehab, which is self-paced. */
+export function weekRangeLabel(phase: PhaseId): string | null {
+  const def = PHASES[phase]
+  if (def.track !== 'rehab') return null
+  const start = REHAB_PHASE_START_WEEK[phase]
+  const next = REHAB_ORDER[REHAB_ORDER.indexOf(phase) + 1]
+  return next ? `Typically weeks ${start}-${REHAB_PHASE_START_WEEK[next]}` : `Typically week ${start}+`
+}
+
 export function nextPhase(phase: PhaseId): PhaseId | null {
   const order = phaseOrder(PHASES[phase].track)
   const index = order.indexOf(phase)
   return index >= 0 && index < order.length - 1 ? order[index + 1] : null
 }
 
-/** Plain-language description of a phase, for check-in result copy. */
+/** Plain-language description of a phase, for onboarding's initial-placement check-in. */
 export function programmeLevelPhrase(phase: PhaseId): string {
   if (phase === 'prehab_ready') return "you're ready for surgery"
   const { shortLabel, title } = PHASES[phase]
   return `we're starting you at ${shortLabel}: ${title}`
+}
+
+/** Plain-language description of a mid-programme milestone check-in's result: advanced on a pass, held in place on a fail. */
+export function milestoneResultPhrase(passed: boolean, currentPhase: PhaseId, resultPhase: PhaseId): string {
+  if (!passed) {
+    const { shortLabel, title } = PHASES[currentPhase]
+    return `you'll stay at ${shortLabel}: ${title} for now`
+  }
+  if (resultPhase === 'prehab_ready') return "you're ready for surgery"
+  const { shortLabel, title } = PHASES[resultPhase]
+  return `you've advanced to ${shortLabel}: ${title}`
 }
 
 export function weeksPostOp(surgeryDate: string, today: Date = new Date()): number {
@@ -159,7 +190,7 @@ export function isTimeEligibleForNextPhase(track: Track, currentPhase: PhaseId, 
   if (track !== 'rehab' || !surgeryDate) return false
   const next = nextPhase(currentPhase)
   if (!next) return false
-  return weeksPostOp(surgeryDate) >= REHAB_PHASE_START_WEEK[next]
+  return isTimeEligibleForPhase(track, next, surgeryDate)
 }
 
 export interface MilestoneQuestion {
@@ -290,3 +321,11 @@ export const PHASE_QUESTIONS: Record<PhaseId, MilestoneQuestion[]> = {
   ],
   rehab_return_to_sport: [],
 }
+
+/** question_id -> rom direction, for every milestone question that records a ROM angle. */
+export const ROM_QUESTION_DIRECTIONS: Record<string, 'extension' | 'flexion'> = Object.fromEntries(
+  Object.values(PHASE_QUESTIONS)
+    .flat()
+    .filter((q): q is MilestoneQuestion & { rom: NonNullable<MilestoneQuestion['rom']> } => q.rom != null)
+    .map((q) => [q.id, q.rom.direction]),
+)

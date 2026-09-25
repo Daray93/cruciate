@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Variants } from 'motion/react'
-import { nextPhase, PHASE_QUESTIONS, programmeLevelPhrase } from '../lib/phases'
+import { milestoneResultPhrase, nextPhase, PHASE_QUESTIONS, programmeLevelPhrase } from '../lib/phases'
 import type { MilestoneQuestion, PhaseId } from '../lib/phases'
 import { CelebrationOverlay } from './CelebrationOverlay'
 import { IconCheck } from './icons'
@@ -17,6 +17,8 @@ export interface CheckinAnswer {
 interface MilestoneCheckInProps {
   phase: PhaseId
   title?: string
+  /** 'onboarding' frames the result as your initial placement; 'checkin' (default) frames it as advancing from where you already are. */
+  mode?: 'onboarding' | 'checkin'
   onSubmit: (answers: CheckinAnswer[]) => Promise<{ passed: boolean }>
   /** Called after either a pass or a fail, once the user is ready to move on. */
   onContinue?: () => void
@@ -58,7 +60,7 @@ const stepVariantsReduced: Variants = {
   exit: { opacity: 0 },
 }
 
-export function MilestoneCheckIn({ phase, title, onSubmit, onContinue }: MilestoneCheckInProps) {
+export function MilestoneCheckIn({ phase, title, mode = 'checkin', onSubmit, onContinue }: MilestoneCheckInProps) {
   const questions = PHASE_QUESTIONS[phase]
   const [stepIndex, setStepIndex] = useState(0)
   const [direction, setDirection] = useState<1 | -1>(1)
@@ -130,15 +132,16 @@ export function MilestoneCheckIn({ phase, title, onSubmit, onContinue }: Milesto
   }
 
   if (result) {
-    const startingPhase = result === 'passed' ? (nextPhase(phase) ?? phase) : phase
+    const passed = result === 'passed'
+    const resultPhase = passed ? (nextPhase(phase) ?? phase) : phase
+    const resultPhrase = mode === 'onboarding' ? programmeLevelPhrase(resultPhase) : milestoneResultPhrase(passed, phase, resultPhase)
     return (
       <div className="milestone-result">
         <IconCheck className="milestone-result-icon" />
         <div>
           <p className="milestone-result-title">Check-in complete!</p>
           <p>
-            Based on your answers, {programmeLevelPhrase(startingPhase)}. You can always switch phases later from
-            the Phases tab.
+            Based on your answers, {resultPhrase}. You can always switch phases later from the Phases tab.
           </p>
           {onContinue && (
             <button type="button" className="milestone-continue" onClick={onContinue}>

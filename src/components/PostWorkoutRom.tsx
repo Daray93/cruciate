@@ -1,7 +1,12 @@
 import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { RomPoint } from '../hooks/useRomHistory'
+import type { PhaseId, Track } from '../lib/phases'
 import type { RomEntry } from '../types'
 import { CelebrationOverlay } from './CelebrationOverlay'
+import { IconX } from './icons'
+import type { CheckinAnswer } from './MilestoneCheckIn'
+import { MilestoneCheckIn } from './MilestoneCheckIn'
 import { MilestoneRomStep } from './MilestoneRomStep'
 import './PostWorkoutRom.css'
 
@@ -10,6 +15,12 @@ interface PostWorkoutRomProps {
   onChange: (patch: Partial<RomEntry>) => void
   history: RomPoint[]
   onViewProgress: () => void
+  track: Track
+  phase: PhaseId
+  checkinDue: boolean
+  onSubmitCheckin: (answers: CheckinAnswer[]) => Promise<{ passed: boolean }>
+  /** Called once, when this round's ROM logging finishes (reaching the summary). */
+  onRoundComplete: () => void
 }
 
 type Step = 'extension' | 'flexion' | 'summary'
@@ -60,17 +71,38 @@ function improvement(direction: 'extension' | 'flexion', today: number, previous
   return direction === 'extension' ? previous - today : today - previous
 }
 
-export function PostWorkoutRom({ reading, onChange, history, onViewProgress }: PostWorkoutRomProps) {
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+export function PostWorkoutRom({
+  reading,
+  onChange,
+  history,
+  onViewProgress,
+  track,
+  phase,
+  checkinDue,
+  onSubmitCheckin,
+  onRoundComplete,
+}: PostWorkoutRomProps) {
   const [step, setStep] = useState<Step>('extension')
   const [celebrating, setCelebrating] = useState(false)
   const [extensionValue, setExtensionValue] = useState(() => toNumber(reading.extension, 15))
   const [flexionValue, setFlexionValue] = useState(() => toNumber(reading.flexion, 75))
+  const [checkinOpen, setCheckinOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
 
   const previous = history.length > 0 ? history[history.length - 1] : null
 
   function handleCelebrationDone() {
     setCelebrating(false)
-    setStep((s) => (s === 'extension' ? 'flexion' : 'summary'))
+    if (step === 'extension') {
+      setStep('flexion')
+    } else {
+      setStep('summary')
+      onRoundComplete()
+    }
   }
 
   function submitExtension() {
@@ -102,12 +134,58 @@ export function PostWorkoutRom({ reading, onChange, history, onViewProgress }: P
         <p className="post-workout-rom-summary-title">Range of motion logged</p>
         <p className="post-workout-rom-summary-body">
           {lines.length > 0
-            ? `You're doing better than you were before — ${lines.join(' and ')} than last time.`
-            : "Logged. Every reading builds the picture of how you're trending over time."}
+            ? `${capitalize(lines.join(' and '))} than last time.`
+            : "Every reading builds the picture of how you're trending over time."}
         </p>
         <button type="button" className="post-workout-rom-progress-link" onClick={onViewProgress}>
           Want to see your progress?
         </button>
+
+        <AnimatePresence mode="wait">
+          {checkinDue && !checkinOpen && (
+            <motion.button
+              key="checkin-prompt"
+              type="button"
+              className="rom-checkin-prompt-card"
+              onClick={() => setCheckinOpen(true)}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1) translateY(0px)' }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+              transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+            >
+              <span className="rom-checkin-prompt-title">
+                {track === 'rehab' ? "You're time-eligible for your next phase" : 'Ready to check your progress?'}
+              </span>
+              <span className="rom-checkin-prompt-body">Answer a quick check-in to see if you're ready to advance.</span>
+            </motion.button>
+          )}
+
+          {checkinDue && checkinOpen && (
+            <motion.section
+              key="checkin-panel"
+              className="rom-checkin-panel"
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1) translateY(0px)' }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
+              transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+            >
+              <button
+                type="button"
+                className="rom-checkin-panel-close"
+                aria-label="Close check-in"
+                onClick={() => setCheckinOpen(false)}
+              >
+                <IconX />
+              </button>
+              <MilestoneCheckIn
+                phase={phase}
+                title="Milestone check-in"
+                onSubmit={onSubmitCheckin}
+                onContinue={() => setCheckinOpen(false)}
+              />
+            </motion.section>
+          )}
+        </AnimatePresence>
       </div>
     )
   }

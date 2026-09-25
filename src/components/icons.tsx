@@ -102,6 +102,14 @@ export function IconChevronRight({ className }: IconProps) {
   )
 }
 
+export function IconChevronDown({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M5 9l7 7 7-7" />
+    </svg>
+  )
+}
+
 export function IconDotsHorizontal({ className }: IconProps) {
   return (
     <svg {...BASE_PROPS} className={className}>
@@ -167,6 +175,31 @@ export function IconTrendingUp({ className }: IconProps) {
     <svg {...BASE_PROPS} className={className}>
       <path d="M3 17l6-6 4 4 8-8" />
       <path d="M15 7h6v6" />
+    </svg>
+  )
+}
+
+export function IconTrendingDown({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M3 7l6 6 4-4 8 8" />
+      <path d="M15 17h6v-6" />
+    </svg>
+  )
+}
+
+export function IconMinus({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M5 12h14" />
+    </svg>
+  )
+}
+
+export function IconPlus({ className }: IconProps) {
+  return (
+    <svg {...BASE_PROPS} className={className}>
+      <path d="M12 5v14M5 12h14" />
     </svg>
   )
 }

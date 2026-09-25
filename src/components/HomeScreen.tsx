@@ -1,35 +1,45 @@
 import { useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { formatLongDate, formatRelativeToToday } from '../lib/date'
-import { isTimeEligibleForNextPhase, nextPhase, PHASES, weeksPostOp } from '../lib/phases'
-import { useMilestoneCheckins } from '../hooks/useMilestoneCheckins'
+import { PHASES, weeksPostOp } from '../lib/phases'
 import type { UserProfile } from '../types'
-import { IconX } from './icons'
-import { MilestoneCheckIn } from './MilestoneCheckIn'
 import './HomeScreen.css'
 
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1]
 
+const GREETINGS = [
+  'Welcome back',
+  'Hey',
+  'Hello',
+  'Hi',
+  "What's good",
+  'Howya',
+  'Welcome',
+  'Fáilte',
+  'Bienvenue',
+  'Hey there',
+  'Howdy',
+  'Yo',
+  'Alright',
+  "What's the story",
+  'Hey',
+  'Sup',
+  'Salut',
+]
+
 interface HomeScreenProps {
-  userId: string
   profile: UserProfile
-  onProfileChange: () => void
   onOpenRehab: () => void
   onOpenProfile: () => void
 }
 
-export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOpenProfile }: HomeScreenProps) {
+export function HomeScreen({ profile, onOpenRehab, onOpenProfile }: HomeScreenProps) {
   const { current_phase: currentPhase, track } = profile
   const phaseDef = PHASES[currentPhase]
-  const [checkinOpen, setCheckinOpen] = useState(false)
   const reduceMotion = useReducedMotion()
+  const [greeting] = useState(() => GREETINGS[Math.floor(Math.random() * GREETINGS.length)])
 
   const cycleWeek = track === 'rehab' && profile.surgery_date ? weeksPostOp(profile.surgery_date) : 0
-  const { submitCheckin } = useMilestoneCheckins(userId)
-
-  const next = nextPhase(currentPhase)
-  const checkinDue =
-    next !== null && (track === 'prehab' || isTimeEligibleForNextPhase(track, currentPhase, profile.surgery_date))
 
   const surgeryTimelineText =
     track === 'prehab'
@@ -61,7 +71,7 @@ export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOp
             animate={reduceMotion ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px)', transform: 'translateY(0px)' }}
             transition={{ duration: reduceMotion ? 0.2 : 0.5, ease: EASE_OUT }}
           >
-            Welcome back,{' '}
+            {greeting},{' '}
             <motion.span
               className="home-greeting-name"
               initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.85)' }}
@@ -85,56 +95,6 @@ export function HomeScreen({ userId, profile, onProfileChange, onOpenRehab, onOp
           <p className="home-phase-criterion">{phaseDef.graduationCriterion}</p>
         </div>
       </section>
-
-      <AnimatePresence mode="wait">
-        {checkinDue && !checkinOpen && (
-          <motion.button
-            key="checkin-prompt"
-            type="button"
-            className="checkin-prompt-card"
-            onClick={() => setCheckinOpen(true)}
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
-            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1) translateY(0px)' }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
-            transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-          >
-            <span className="checkin-prompt-title">
-              {track === 'rehab' ? "You're time-eligible for your next phase" : 'Ready to check your progress?'}
-            </span>
-            <span className="checkin-prompt-body">Answer a quick check-in to see if you're ready to advance.</span>
-          </motion.button>
-        )}
-
-        {checkinDue && checkinOpen && (
-          <motion.section
-            key="checkin-panel"
-            className="checkin-panel"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
-            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'scale(1) translateY(0px)' }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'scale(0.97) translateY(-6px)' }}
-            transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-          >
-            <button
-              type="button"
-              className="checkin-panel-close"
-              aria-label="Close check-in"
-              onClick={() => setCheckinOpen(false)}
-            >
-              <IconX />
-            </button>
-            <MilestoneCheckIn
-              phase={currentPhase}
-              title="Milestone check-in"
-              onSubmit={async (answers) => {
-                const result = await submitCheckin(currentPhase, answers)
-                onProfileChange()
-                return result
-              }}
-              onContinue={() => setCheckinOpen(false)}
-            />
-          </motion.section>
-        )}
-      </AnimatePresence>
 
       <button type="button" className="home-rehab-cta" onClick={onOpenRehab}>
         <span className="home-rehab-cta-title">Complete today's rehab</span>

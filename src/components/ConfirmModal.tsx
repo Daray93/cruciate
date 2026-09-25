@@ -7,6 +7,8 @@ interface ConfirmModalProps {
   body: string
   confirmLabel: string
   cancelLabel?: string
+  /** Label shown on the confirm button while `confirming` is true. */
+  confirmingLabel?: string
   destructive?: boolean
   confirming?: boolean
   onConfirm: () => void
@@ -18,6 +20,7 @@ export function ConfirmModal({
   body,
   confirmLabel,
   cancelLabel = 'Cancel',
+  confirmingLabel = 'Working…',
   destructive,
   confirming,
   onConfirm,
@@ -65,7 +68,7 @@ export function ConfirmModal({
             onClick={onConfirm}
             disabled={confirming}
           >
-            {confirming ? 'Working…' : confirmLabel}
+            {confirming ? confirmingLabel : confirmLabel}
           </button>
         </div>
       </motion.div>

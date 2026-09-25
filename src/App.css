@@ -15,11 +15,30 @@
   padding-bottom: calc(var(--space-8) + 64px + env(safe-area-inset-bottom));
 }
 
+/* Headers are position:fixed (not sticky) — sticky only reliably works when
+   every ancestor up to the scrolling root has overflow:visible, which is
+   fragile to guarantee across nested animated/scrollable panels. Fixed
+   anchors to the true viewport unconditionally, at the cost of needing this
+   compensating top padding so content doesn't render underneath it. */
+.app-shell:has(> .app-header),
+.app-shell:has(> .subpage-header) {
+  padding-top: calc(100px + env(safe-area-inset-top));
+}
+
 .app-header {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 0;
+  right: 0;
+  z-index: 15;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: var(--space-5);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -29,10 +48,19 @@
 }
 
 .subpage-header {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 0;
+  right: 0;
+  z-index: 15;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-bottom: var(--space-5);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -52,6 +80,7 @@
   color: var(--ink-muted);
   font-weight: 600;
   font-size: 0.9rem;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -101,8 +130,8 @@
 }
 
 .log-session-button {
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
   border: none;
   background: var(--teal);
   color: var(--bg);
@@ -140,7 +169,45 @@
   background: var(--teal-soft);
 }
 
-.rom-trend-section h2,
-.session-history-section h2 {
-  margin: 0 0 var(--space-4);
+.manage-exercises-trigger {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.manage-exercises-trigger:hover {
+  background: var(--surface-raised);
+}
+
+.rom-trend-section,
+.session-history-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.section-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
 }

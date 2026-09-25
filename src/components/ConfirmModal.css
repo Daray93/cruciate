@@ -32,11 +32,12 @@
 
 .confirm-modal-actions {
   display: flex;
+  flex-direction: column;
   gap: var(--space-3);
 }
 
 .confirm-modal-cancel {
-  flex: 1;
+  width: 100%;
   padding: var(--space-3);
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
@@ -47,7 +48,7 @@
 }
 
 .confirm-modal-confirm {
-  flex: 1;
+  width: 100%;
   padding: var(--space-3);
   border-radius: var(--radius-md);
   border: none;

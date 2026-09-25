@@ -1,51 +1,93 @@
 .rom-trend-chart {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-4);
 }
 
-.rom-trend-chart svg {
+.rom-trend-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.rom-trend-figure-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.rom-trend-figure svg {
   width: 100%;
   height: auto;
+  overflow: visible;
+}
+
+.rom-trend-gridline {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.rom-trend-axis-label {
+  fill: var(--ink-muted);
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rom-trend-y-label {
+  text-anchor: end;
+  dominant-baseline: middle;
+}
+
+.rom-trend-x-label {
+  text-anchor: middle;
 }
 
 .rom-trend-line {
   fill: none;
-  stroke-width: 2.5;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .rom-trend-line.extension {
-  stroke: var(--amber);
+  stroke: var(--violet);
 }
 
 .rom-trend-line.flexion {
   stroke: var(--teal);
 }
 
-.rom-trend-legend {
-  display: flex;
-  gap: var(--space-4);
-  font-size: 0.75rem;
-  color: var(--ink-muted);
+.rom-trend-area {
+  stroke: none;
 }
 
-.rom-trend-legend-item::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: var(--space-1);
+.rom-trend-area.extension {
+  fill: var(--violet-soft);
 }
 
-.rom-trend-legend-item.extension::before {
-  background: var(--amber);
+.rom-trend-area.flexion {
+  fill: var(--teal-soft);
 }
 
-.rom-trend-legend-item.flexion::before {
-  background: var(--teal);
+.rom-trend-end-dot {
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.rom-trend-end-dot.extension {
+  fill: var(--violet);
+}
+
+.rom-trend-end-dot.flexion {
+  fill: var(--teal);
+}
+
+.rom-trend-end-label {
+  fill: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .rom-trend-empty {
@@ -55,6 +97,6 @@
 
 .rom-trend-hint {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--ink-muted);
 }

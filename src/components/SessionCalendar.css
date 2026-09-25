@@ -1,0 +1,314 @@
+.session-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.session-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.session-calendar-month {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.session-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.session-calendar-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.session-calendar-nav:not(:disabled):hover {
+  background: var(--surface-raised);
+  color: var(--ink);
+}
+
+.session-calendar-nav:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.session-calendar-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.session-calendar-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.session-calendar-grid th {
+  padding-bottom: var(--space-2);
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.session-calendar-grid td {
+  padding: 2px;
+  text-align: center;
+}
+
+.session-calendar-day {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-muted);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.outside .session-calendar-day {
+  opacity: 0.35;
+}
+
+button.session-calendar-day {
+  cursor: pointer;
+}
+
+.session-calendar-day.done {
+  font-size: 0.66rem;
+}
+
+.session-calendar-day.done.bronze {
+  border-color: var(--bronze);
+  background: var(--bronze-soft);
+  color: var(--bronze);
+}
+
+.session-calendar-day.done.bronze:hover,
+.session-calendar-day.done.bronze.selected {
+  background: var(--bronze);
+  color: var(--bg);
+}
+
+.session-calendar-day.done.silver {
+  border-color: var(--silver);
+  background: var(--silver-soft);
+  color: var(--silver);
+}
+
+.session-calendar-day.done.silver:hover,
+.session-calendar-day.done.silver.selected {
+  background: var(--silver);
+  color: var(--bg);
+}
+
+.session-calendar-day.done.gold {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+.session-calendar-day.done.gold:hover,
+.session-calendar-day.done.gold.selected {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+button.session-calendar-day:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+.session-calendar-day.missed {
+  border-color: var(--red);
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+button.session-calendar-day.missed:hover,
+.session-calendar-day.missed.selected {
+  background: var(--red);
+  color: var(--bg);
+}
+
+.session-calendar-missed-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.session-calendar-day.today {
+  border-color: var(--ink-muted);
+}
+
+.session-calendar-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.session-calendar-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+}
+
+.session-calendar-legend-swatch {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.58rem;
+  font-weight: 700;
+}
+
+.session-calendar-legend-swatch svg {
+  width: 10px;
+  height: 10px;
+}
+
+.session-calendar-legend-swatch.bronze {
+  border-color: var(--bronze);
+  background: var(--bronze-soft);
+  color: var(--bronze);
+}
+
+.session-calendar-legend-swatch.silver {
+  border-color: var(--silver);
+  background: var(--silver-soft);
+  color: var(--silver);
+}
+
+.session-calendar-legend-swatch.gold {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+.session-calendar-legend-swatch.missed {
+  border-color: var(--red);
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.session-calendar-detail {
+  overflow: hidden;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+}
+
+.session-calendar-detail-date {
+  margin: 0 0 var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.session-calendar-round {
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.session-calendar-round:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.session-calendar-detail-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.session-calendar-round-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-calendar-round-delete {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.session-calendar-round-delete svg {
+  width: 16px;
+  height: 16px;
+}
+
+.session-calendar-round-delete:hover {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.session-calendar-round-delete:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--red-soft);
+}
+
+.session-calendar-tag {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--teal-soft);
+  color: var(--teal);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.session-calendar-flag {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--red-soft);
+  color: var(--red);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+

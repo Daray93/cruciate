@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import { AnimatePresence } from 'motion/react'
 import { supabase } from '../lib/supabase'
-import { PHASES, phaseOrder } from '../lib/phases'
+import { isTimeEligibleForPhase, PHASES, phaseOrder, weekRangeLabel } from '../lib/phases'
 import type { PhaseId } from '../lib/phases'
 import { useExercisesByTrack } from '../hooks/useExercisesByTrack'
 import type { UserProfile } from '../types'
+import { ConfirmModal } from './ConfirmModal'
 import { IconCheck } from './icons'
+import { MorphChevron } from './MorphChevron'
 import './PhasesScreen.css'
 
 interface PhasesScreenProps {
@@ -17,6 +20,7 @@ export function PhasesScreen({ userId, profile, onProfileChange }: PhasesScreenP
   const { exercisesByPhase } = useExercisesByTrack(profile.track)
   const [openPhaseId, setOpenPhaseId] = useState<PhaseId | null>(null)
   const [switching, setSwitching] = useState<PhaseId | null>(null)
+  const [earlySwitchTarget, setEarlySwitchTarget] = useState<PhaseId | null>(null)
 
   const order = phaseOrder(profile.track)
   const currentIndex = order.indexOf(profile.current_phase)
@@ -29,6 +33,14 @@ export function PhasesScreen({ userId, profile, onProfileChange }: PhasesScreenP
       .eq('user_id', userId)
     setSwitching(null)
     onProfileChange()
+  }
+
+  function requestSwitch(phaseId: PhaseId) {
+    if (isTimeEligibleForPhase(profile.track, phaseId, profile.surgery_date)) {
+      void handleSwitch(phaseId)
+    } else {
+      setEarlySwitchTarget(phaseId)
+    }
   }
 
   function openPhase(phaseId: PhaseId) {
@@ -92,10 +104,16 @@ export function PhasesScreen({ userId, profile, onProfileChange }: PhasesScreenP
                   <span className="phase-card-label">{phaseDef.shortLabel}</span>
                   <span className="phase-card-title">{phaseDef.title}</span>
                 </span>
-                {isCurrent && <span className="phase-card-current-badge">Current</span>}
+                <span className="phase-card-header-end">
+                  {isCurrent && <span className="phase-card-current-badge">Current</span>}
+                  <span className="phase-card-chevron">
+                    <MorphChevron open={isOpen} />
+                  </span>
+                </span>
               </button>
 
               <p className="phase-card-criterion">{phaseDef.graduationCriterion}</p>
+              {weekRangeLabel(phaseId) && <p className="phase-card-weeks">{weekRangeLabel(phaseId)}</p>}
 
               {isOpen && (
                 <div className="phase-card-detail">
@@ -124,7 +142,7 @@ export function PhasesScreen({ userId, profile, onProfileChange }: PhasesScreenP
                       type="button"
                       className="phase-switch-button"
                       disabled={switching === phaseId}
-                      onClick={() => void handleSwitch(phaseId)}
+                      onClick={() => requestSwitch(phaseId)}
                     >
                       {switching === phaseId ? 'Switching…' : 'Switch to this phase'}
                     </button>
@@ -135,6 +153,19 @@ export function PhasesScreen({ userId, profile, onProfileChange }: PhasesScreenP
           )
         })}
       </ul>
+
+      <AnimatePresence>
+        {earlySwitchTarget && (
+          <ConfirmModal
+            title="Switch early?"
+            body={`You're not typically eligible for ${PHASES[earlySwitchTarget].shortLabel}: ${PHASES[earlySwitchTarget].title} yet (${weekRangeLabel(earlySwitchTarget)}). If your PT or surgeon has cleared you sooner, that's fine, this is just a general guideline.`}
+            confirmLabel="Switch anyway"
+            confirming={switching === earlySwitchTarget}
+            onConfirm={() => void handleSwitch(earlySwitchTarget).then(() => setEarlySwitchTarget(null))}
+            onCancel={() => setEarlySwitchTarget(null)}
+          />
+        )}
+      </AnimatePresence>
     </main>
   )
 }

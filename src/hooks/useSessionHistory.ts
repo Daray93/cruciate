@@ -7,6 +7,8 @@ export interface SessionSummary {
   dayKey: string
   cycleWeek: number
   redFlag: boolean
+  completedAt: string | null
+  createdAt: string
 }
 
 export function useSessionHistory(userId: string) {
@@ -17,7 +19,7 @@ export function useSessionHistory(userId: string) {
     let cancelled = false
     supabase
       .from('sessions')
-      .select('id, date, day_key, cycle_week, red_flag')
+      .select('id, date, day_key, cycle_week, red_flag, completed_at, created_at')
       .eq('user_id', userId)
       .order('date', { ascending: false })
       .then(({ data }) => {
@@ -29,6 +31,8 @@ export function useSessionHistory(userId: string) {
             dayKey: row.day_key,
             cycleWeek: row.cycle_week,
             redFlag: row.red_flag,
+            completedAt: row.completed_at,
+            createdAt: row.created_at,
           })),
         )
       })

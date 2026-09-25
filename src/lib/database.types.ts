@@ -14,6 +14,7 @@ export interface Database {
           cycle_week: number
           red_flag: boolean
           created_at: string
+          completed_at: string | null
         }
         Insert: {
           id?: string
@@ -23,6 +24,7 @@ export interface Database {
           cycle_week: number
           red_flag?: boolean
           created_at?: string
+          completed_at?: string | null
         }
         Update: {
           id?: string
@@ -32,6 +34,7 @@ export interface Database {
           cycle_week?: number
           red_flag?: boolean
           created_at?: string
+          completed_at?: string | null
         }
         Relationships: []
       }
@@ -44,6 +47,8 @@ export interface Database {
           weight: number | null
           reps: number | null
           rpe: number | null
+          sets_completed: number
+          holds_completed: number
         }
         Insert: {
           id?: string
@@ -53,6 +58,8 @@ export interface Database {
           weight?: number | null
           reps?: number | null
           rpe?: number | null
+          sets_completed?: number
+          holds_completed?: number
         }
         Update: {
           id?: string
@@ -62,6 +69,8 @@ export interface Database {
           weight?: number | null
           reps?: number | null
           rpe?: number | null
+          sets_completed?: number
+          holds_completed?: number
         }
         Relationships: []
       }
@@ -211,6 +220,7 @@ export interface Database {
           contraindications: string | null
           requires_load_clearance: boolean
           hold_seconds: number | null
+          hold_reps: number | null
           sort_order: number
         }
         Insert: {
@@ -229,6 +239,7 @@ export interface Database {
           contraindications?: string | null
           requires_load_clearance?: boolean
           hold_seconds?: number | null
+          hold_reps?: number | null
           sort_order?: number
         }
         Update: {
@@ -247,7 +258,26 @@ export interface Database {
           contraindications?: string | null
           requires_load_clearance?: boolean
           hold_seconds?: number | null
+          hold_reps?: number | null
           sort_order?: number
+        }
+        Relationships: []
+      }
+      user_exercise_prefs: {
+        Row: {
+          user_id: string
+          exercise_id: string
+          hidden: boolean
+        }
+        Insert: {
+          user_id: string
+          exercise_id: string
+          hidden?: boolean
+        }
+        Update: {
+          user_id?: string
+          exercise_id?: string
+          hidden?: boolean
         }
         Relationships: []
       }

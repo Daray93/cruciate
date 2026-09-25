@@ -1,0 +1,59 @@
+.backfill-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* This panel always renders inside .session-calendar-detail (surface-raised),
+   so its exercise rows need to match that surface instead of the app's
+   default --bg that ExerciseChecklist.css assumes. */
+.backfill-panel .exercise-row {
+  background: var(--surface-raised);
+}
+
+.backfill-panel-round {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.backfill-panel-error {
+  margin: 0;
+  color: var(--red);
+  font-size: 0.82rem;
+}
+
+.backfill-panel-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.backfill-panel-close {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.backfill-panel-finish {
+  flex: 1;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--teal);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.backfill-panel-finish:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

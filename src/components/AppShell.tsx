@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import type { Theme } from '../hooks/useTheme'
 import { supabase } from '../lib/supabase'
 import { PRIVACY_POLICY_TEXT } from '../lib/privacyPolicy'
@@ -29,34 +29,29 @@ interface AppShellProps {
 
 export function AppShell({ userId, profile, onProfileChange, theme, onToggleTheme }: AppShellProps) {
   const [screen, setScreen] = useState<Screen>('home')
-  const reduceMotion = useReducedMotion()
 
   const showTabBar = screen === 'home' || screen === 'phases' || screen === 'progress' || screen === 'settings'
 
   return (
     <>
+      {/* Opacity-only: a transform here (even settled at translateY(0)) breaks
+          position:sticky for the headers each screen renders as a descendant. */}
       <AnimatePresence mode="wait">
         <motion.div
           key={screen}
           style={{ width: '100%' }}
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'translateY(12px)' }}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, transform: 'translateY(0px)' }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: 'translateY(-12px)' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: EASE_OUT }}
         >
           {screen === 'home' && (
-            <HomeScreen
-              userId={userId}
-              profile={profile}
-              onProfileChange={onProfileChange}
-              onOpenRehab={() => setScreen('rehab')}
-              onOpenProfile={() => setScreen('profile')}
-            />
+            <HomeScreen profile={profile} onOpenRehab={() => setScreen('rehab')} onOpenProfile={() => setScreen('profile')} />
           )}
           {screen === 'phases' && (
             <PhasesScreen userId={userId} profile={profile} onProfileChange={onProfileChange} />
           )}
-          {screen === 'progress' && <ProgressScreen userId={userId} />}
+          {screen === 'progress' && <ProgressScreen userId={userId} profile={profile} />}
           {screen === 'profile' && (
             <ProfilePage
               userId={userId}
@@ -67,7 +62,6 @@ export function AppShell({ userId, profile, onProfileChange, theme, onToggleThem
           )}
           {screen === 'settings' && (
             <SettingsPage
-              userId={userId}
               theme={theme}
               onToggleTheme={onToggleTheme}
               onSignOut={() => void supabase.auth.signOut()}
@@ -82,6 +76,7 @@ export function AppShell({ userId, profile, onProfileChange, theme, onToggleThem
               onBack={() => setScreen('home')}
               onOpenProfile={() => setScreen('profile')}
               onOpenProgress={() => setScreen('progress')}
+              onProfileChange={onProfileChange}
             />
           )}
           {screen === 'privacy' && (

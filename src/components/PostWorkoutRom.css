@@ -54,3 +54,65 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+.rom-checkin-prompt-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--teal);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.rom-checkin-prompt-title {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.rom-checkin-prompt-body {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.rom-checkin-panel {
+  position: relative;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.rom-checkin-panel-close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.rom-checkin-panel-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.rom-checkin-panel-close:hover {
+  background: var(--surface-raised);
+  color: var(--ink);
+}
+
+.rom-checkin-panel-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}

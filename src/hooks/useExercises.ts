@@ -12,7 +12,7 @@ export function useExercises(track: Track, phase: PhaseId) {
     supabase
       .from('exercises')
       .select(
-        'id, name, category, instructions, purpose, cue, sets, reps_target, frequency_note, equipment, contraindications, requires_load_clearance, hold_seconds',
+        'id, name, category, instructions, purpose, cue, sets, reps_target, frequency_note, equipment, contraindications, requires_load_clearance, hold_seconds, hold_reps',
       )
       .eq('track', track)
       .eq('phase', phase)
@@ -37,6 +37,7 @@ export function useExercises(track: Track, phase: PhaseId) {
             contraindications: row.contraindications ?? undefined,
             requiresLoadClearance: row.requires_load_clearance,
             holdSeconds: row.hold_seconds ?? undefined,
+            holdReps: row.hold_reps ?? undefined,
           })),
         )
       })
